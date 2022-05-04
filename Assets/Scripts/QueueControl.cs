@@ -511,6 +511,10 @@ public class QueueControl : MonoBehaviour
                     {
                         speakText = "All pilots must start landing from test flights.";
                     }
+                    if (e.prefs["useNoFly"] == "1" && currentSeconds == 75)
+                    {
+                        speakText = "Fifteen seconds till no fly time.";
+                    }
                     if (e.prefs["useNoFly"] == "1" && currentSeconds == 70)
                     {
                         speakText = "Ten seconds till no fly time.";

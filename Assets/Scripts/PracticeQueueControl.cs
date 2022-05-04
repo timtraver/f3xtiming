@@ -432,6 +432,10 @@ public class PracticeQueueControl : MonoBehaviour
                     {
                         speakText = "All pilots must start landing from test flights.";
                     }
+                    if (practice.prefs["useNoFly"] == "1" && currentSeconds == 75)
+                    {
+                        speakText = "Fifteen seconds till no fly time.";
+                    }
                     if (practice.prefs["useNoFly"] == "1" && currentSeconds == 70)
                     {
                         speakText = "Ten seconds till no fly time.";
