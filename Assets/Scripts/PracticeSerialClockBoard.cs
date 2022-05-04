@@ -262,8 +262,11 @@ public class PracticeSerialClockBoard : MonoBehaviour
                 min = Convert.ToInt32(timeString.Substring(0, 2));
                 sec = Convert.ToInt32(timeString.Substring(2));
                 totalSeconds = (60 * min) + sec;
+                if (queueControl.playList[queueControl.currentQueueEntry].entryType == "PrepTime" && queueControl.clockCurrentSeconds <= 60 && queueControl.practice.prefs["useNoFly"] == "1")
+                {
+                    windowType = "NF";
+                }
                 EventTask task = queueControl.practice.getRoundTask(round_number);
-
                 if (queueControl.queueTimerRunning)
                 {
                     sendString = string.Format("P|{0:00}|{1}|{2}|{3}\r\n", round_number, group.PadLeft(2, '0'), queueControl.playList[queueControl.currentQueueEntry].allUpFlight.ToString(), task.flight_type_name.Replace("F3K Task ","") );

@@ -263,6 +263,10 @@ public class SerialClockBoard : MonoBehaviour
                 min = Convert.ToInt32(timeString.Substring(0, 2));
                 sec = Convert.ToInt32(timeString.Substring(2));
                 totalSeconds = (60 * min) + sec;
+                if (queueControl.playList[queueControl.currentQueueEntry].entryType == "PrepTime" && queueControl.clockCurrentSeconds <= 60 && queueControl.e.prefs["useNoFly"] == "1")
+                {
+                    windowType = "NF";
+                }
                 EventTask task = queueControl.e.getTask(round_number);
                 if (queueControl.queueTimerRunning)
                 {
