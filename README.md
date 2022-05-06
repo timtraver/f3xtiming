@@ -1,7 +1,7 @@
 # f3xtiming
 F3XTiming Unity Application
 
-	<h3>Introducing F3XTiming!</h3>
+<h3>Introducing F3XTiming!</h3>
 	F3XTiming is a full stack application that runs on your Mac or PC to run timing audio and peripherals such as a timing board. It is a full featured program to run your event timing and timing boards. Here is a list of features :<br>
 	<br>
 	<ul style="font-weight: bold;font-size: 16px;">
