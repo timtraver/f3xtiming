@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -339,41 +339,49 @@ public class QueueControl : MonoBehaviour
         AudioClip clip;
         e.audioSource.volume = 1.0f;
 
-        if ( length == 0)
-        {
-            return;
-        }
         clip = e.airHorn1;
 
         // Method to play a particular horn
         switch( e.prefsHorn.options[e.prefsHorn.value].text )
         {
             case "Air Horn":
+                if (length == 0) { clip = e.airHorn0; }
                 if (length == 1) { clip = e.airHorn1; }
                 if (length == 2) { clip = e.airHorn2; }
                 if (length == 3) { clip = e.airHorn3; }
                 break;
             case "Ship Horn":
+                if (length == 0) { clip = e.shipHorn0; }
                 if (length == 1) { clip = e.shipHorn1; }
                 if (length == 2) { clip = e.shipHorn2; }
                 if (length == 3) { clip = e.shipHorn3; }
                 break;
             case "Sports Arena":
+                if (length == 0) { clip = e.sportArenaHorn0; }
                 if (length == 1) { clip = e.sportArenaHorn1; }
                 if (length == 2) { clip = e.sportArenaHorn2; }
                 if (length == 3) { clip = e.sportArenaHorn3; }
                 break;
             case "Inception Horn":
+                if (length == 0) { clip = e.inceptionHorn0; }
                 if (length == 1) { clip = e.inceptionHorn1; }
                 if (length == 2) { clip = e.inceptionHorn2; }
                 if (length == 3) { clip = e.inceptionHorn3; }
                 break;
             case "Epic Horn":
+                if (length == 0) { clip = e.epicHorn0; }
                 if (length == 1) { clip = e.epicHorn1; }
                 if (length == 2) { clip = e.epicHorn2; }
                 if (length == 3) { clip = e.epicHorn3; }
                 break;
+            case "Moo":
+                if (length == 0) { clip = e.moo0; }
+                if (length == 1) { clip = e.moo1; }
+                if (length == 2) { clip = e.moo2; }
+                if (length == 3) { clip = e.moo3; }
+                break;
             default:
+                if (length == 0) { clip = e.airHorn0; }
                 if (length == 1) { clip = e.airHorn1; }
                 if (length == 2) { clip = e.airHorn2; }
                 if (length == 3) { clip = e.airHorn3; }
@@ -505,6 +513,7 @@ public class QueueControl : MonoBehaviour
                 {
                     if (currentSeconds == 60 && e.prefs["useNoFly"] == "1")
                     {
+                        PlayHorn(0);
                         speakText += ". - All pilots must not be flying during this final minnit.";
                     }
                     if (e.prefs["useNoFly"] == "1" && currentSeconds == 80)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -261,41 +261,49 @@ public class PracticeQueueControl : MonoBehaviour
         AudioClip clip;
         practice.audioSource.volume = 1.0f;
         
-        if ( length == 0)
-        {
-            return;
-        }
         clip = practice.airHorn1;
 
         // Method to play a particular horn
         switch(practice.prefsHorn.options[practice.prefsHorn.value].text )
         {
             case "Air Horn":
+                if (length == 0) { clip = practice.airHorn0; }
                 if (length == 1) { clip = practice.airHorn1; }
                 if (length == 2) { clip = practice.airHorn2; }
                 if (length == 3) { clip = practice.airHorn3; }
                 break;
             case "Ship Horn":
+                if (length == 0) { clip = practice.shipHorn0; }
                 if (length == 1) { clip = practice.shipHorn1; }
                 if (length == 2) { clip = practice.shipHorn2; }
                 if (length == 3) { clip = practice.shipHorn3; }
                 break;
             case "Sports Arena":
+                if (length == 0) { clip = practice.sportArenaHorn0; }
                 if (length == 1) { clip = practice.sportArenaHorn1; }
                 if (length == 2) { clip = practice.sportArenaHorn2; }
                 if (length == 3) { clip = practice.sportArenaHorn3; }
                 break;
             case "Inception Horn":
+                if (length == 0) { clip = practice.inceptionHorn0; }
                 if (length == 1) { clip = practice.inceptionHorn1; }
                 if (length == 2) { clip = practice.inceptionHorn2; }
                 if (length == 3) { clip = practice.inceptionHorn3; }
                 break;
             case "Epic Horn":
+                if (length == 0) { clip = practice.epicHorn0; }
                 if (length == 1) { clip = practice.epicHorn1; }
                 if (length == 2) { clip = practice.epicHorn2; }
                 if (length == 3) { clip = practice.epicHorn3; }
                 break;
+            case "Moo":
+                if (length == 0) { clip = practice.moo0; }
+                if (length == 1) { clip = practice.moo1; }
+                if (length == 2) { clip = practice.moo2; }
+                if (length == 3) { clip = practice.moo3; }
+                break;
             default:
+                if (length == 0) { clip = practice.airHorn0; }
                 if (length == 1) { clip = practice.airHorn1; }
                 if (length == 2) { clip = practice.airHorn2; }
                 if (length == 3) { clip = practice.airHorn3; }

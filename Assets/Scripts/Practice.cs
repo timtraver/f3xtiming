@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,21 +42,30 @@ public class Practice : MonoBehaviour
 
     // Sound variables
     public AudioSource audioSource;
+    public AudioClip airHorn0;
     public AudioClip airHorn1;
     public AudioClip airHorn2;
     public AudioClip airHorn3;
+    public AudioClip shipHorn0;
     public AudioClip shipHorn1;
     public AudioClip shipHorn2;
     public AudioClip shipHorn3;
+    public AudioClip sportArenaHorn0;
     public AudioClip sportArenaHorn1;
     public AudioClip sportArenaHorn2;
     public AudioClip sportArenaHorn3;
+    public AudioClip inceptionHorn0;
     public AudioClip inceptionHorn1;
     public AudioClip inceptionHorn2;
     public AudioClip inceptionHorn3;
+    public AudioClip epicHorn0;
     public AudioClip epicHorn1;
     public AudioClip epicHorn2;
     public AudioClip epicHorn3;
+    public AudioClip moo0;
+    public AudioClip moo1;
+    public AudioClip moo2;
+    public AudioClip moo3;
 
 
     // Start is called before the first frame update
