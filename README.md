@@ -34,9 +34,9 @@ F3XTiming Unity Application
 			<td align="center"><b>Manual Timing</b></td>
 		</tr>
 		<tr>
-			<td align="center" width="25%"><a href="/images/f3xtiming_home.png" target="_blank"><img width="75%" src="/images/f3xtiming_home.png" /></a></td>
-			<td align="center" width="25%"><a href="/images/f3xtiming_search.png" target="_blank"><img width="75%" src="/images/f3xtiming_search.png" /></a></td>
-			<td align="center" width="25%"><a href="/images/f3xtiming_event.png" target="_blank"><img width="75%" src="/images/f3xtiming_event.png" /></a></td>
-			<td align="center" width="25%"><a href="/images/f3xtiming_manual.png" target="_blank"><img width="75%" src="/images/f3xtiming_manual.png" /></a></td>
+			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_home.png" target="_blank"><img width="75%" src="/images/f3xtiming_home.png" /></a></td>
+			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_search.png" target="_blank"><img width="75%" src="/images/f3xtiming_search.png" /></a></td>
+			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_event.png" target="_blank"><img width="75%" src="/images/f3xtiming_event.png" /></a></td>
+			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_manual.png" target="_blank"><img width="75%" src="/images/f3xtiming_manual.png" /></a></td>
 		</tr>
 	</table>
