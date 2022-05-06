@@ -24,19 +24,4 @@ F3XTiming Unity Application
 		<li>Versions on MacOS or PC (Looks and works exactly the same)</li>
 	</ul>
 	<br>
-	<h3>Screen Shots (Click for larger preview)</h3>
-	<br>
-	<table width="100%">
-		<tr>
-			<td align="center"><b>Home Screen</b></td>
-			<td align="center"><b>Event Search Screen</b></td>
-			<td align="center"><b>Loaded Event Screen</b></td>
-			<td align="center"><b>Manual Timing</b></td>
-		</tr>
-		<tr>
-			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_home.png" target="_blank"><img width="75%" src="/images/f3xtiming_home.png" /></a></td>
-			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_search.png" target="_blank"><img width="75%" src="/images/f3xtiming_search.png" /></a></td>
-			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_event.png" target="_blank"><img width="75%" src="/images/f3xtiming_event.png" /></a></td>
-			<td align="center" width="25%"><a href="https://www.f3xvault.com/images/f3xtiming_manual.png" target="_blank"><img width="75%" src="/images/f3xtiming_manual.png" /></a></td>
-		</tr>
-	</table>
+For more Information, go to http://www.f3xvault.com/?action=downloads
