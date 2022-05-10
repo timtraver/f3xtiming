@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -225,7 +225,7 @@ public class SerialClockBoard : MonoBehaviour
                 sendString = "A" + timeString + "\r\n";
                 break;
             case "Extended (R00G00TmmssAA)":
-                sendString = string.Format("R{0:00}G{1}T{2}{3}\r\n", round_number, group.PadLeft(2, '0'), timeString, windowType );
+                sendString = string.Format("R{0:00}G{1}T{2}{3}\r", round_number, group.PadLeft(2, '0'), timeString, windowType );
                 break;
             case "F3KMaster":
                 // Let us figure out the number of seconds from the clock value sent
