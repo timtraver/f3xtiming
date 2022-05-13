@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -412,10 +412,16 @@ public class FlightDescriptions
         ));
         // F5J Low Launch
         flights.Add(new FlightDescription(
-            code: "f5j_low",
-            name: "F5J Low Launch",
+            code: "f5j_low30",
+            name: "F5J Low Launch 30 min",
             description: "F5j Electric duration low launch competition... Thirty minute working window.",
             windowTime: 1800
+        ));
+        flights.Add(new FlightDescription(
+            code: "f5j_low60",
+            name: "F5J Low Launch 1 hour",
+            description: "F5j Electric duration low launch competition... One hour working window.",
+            windowTime: 3600
         ));
         // GPS Flight
         flights.Add(new FlightDescription(
