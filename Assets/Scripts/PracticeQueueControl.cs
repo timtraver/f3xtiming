@@ -356,6 +356,7 @@ public class PracticeQueueControl : MonoBehaviour
             bool speak = false;
             float speakSpeed = 1.0f;
 
+            if (playList[currentQueueEntry].timerLastFive && currentSeconds <= 5) { speak = true; }
             if (playList[currentQueueEntry].timerLastTen && currentSeconds <= 10) { speak = true; }
             if (playList[currentQueueEntry].timerLastTwenty && currentSeconds <= 20) { speak = true; }
             if (playList[currentQueueEntry].timerLastThirty && currentSeconds <= 30) { speak = true; }
@@ -371,10 +372,10 @@ public class PracticeQueueControl : MonoBehaviour
             if (playList[currentQueueEntry].timerEveryTenInLastMinute && currentSeconds % 10 == 0 && currentSeconds <= 60) { speak = true; }
             if (playList[currentQueueEntry].timerEveryFiveInLastMinute && currentSeconds % 5 == 0 && currentSeconds <= 60) { speak = true; }
             if (playList[currentQueueEntry].timerEveryThirty && currentSeconds % 30 == 0) { speak = true; }
+            if (playList[currentQueueEntry].entryType == "Testing" && currentSeconds == 15) { speak = true; }
+            if (playList[currentQueueEntry].entryType == "PrepTime" && currentSeconds == 15 ) { speak = true; }
             if (currentSeconds == Convert.ToInt32( clockTotalSeconds )) { speak = false; }
             if (currentSeconds == 0 ) { speak = false; }
-
-            if (practice.prefs["useNoFly"] == "1" && (currentSeconds == 80 || currentSeconds == 70 || currentSeconds == 65) && playList[currentQueueEntry].entryType == "PrepTime") { speak = true; }
 
             // Now speak if needed
             if ( speak == true)
@@ -414,43 +415,40 @@ public class PracticeQueueControl : MonoBehaviour
                     if (currentSeconds >= 30 && playList[currentQueueEntry].timerEveryTenInLastMinute && !playList[currentQueueEntry].timerLastThirty) { addSeconds = true; }
                     if (currentSeconds >= 21 && !playList[currentQueueEntry].timerLastThirty) { addSeconds = true; }
                     if (currentSeconds == 20 && !playList[currentQueueEntry].timerLastTwenty && !playList[currentQueueEntry].timerLastThirty) { addSeconds = true; }
+                    if (currentSeconds == 15 && !playList[currentQueueEntry].timerLastTwenty && !playList[currentQueueEntry].timerLastThirty) { addSeconds = true; }
                     if (addSeconds)
                     {
                         speakText += " seconds";
                     }
                 }
-                if ( (playList[currentQueueEntry].spokenTextOnCountdown != null || playList[currentQueueEntry].spokenTextOnCountdown != null ) && currentSeconds >= 15)
+                if(playList[currentQueueEntry].entryType == "PrepTime")
                 {
-                    if (playList[currentQueueEntry].entryType != "PrepTime")
+
+                    if (playList[currentQueueEntry].spokenTextOnCountdown != null && currentSeconds >= 15 && !playList[currentQueueEntry].timerLastTwenty && !playList[currentQueueEntry].timerLastThirty)
                     {
                         speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
                     }
-                    else if(currentSeconds % 30 == 0)
+                    else if (currentSeconds % 30 == 0)
                     {
                         speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
                     }
                 }
-                if (playList[currentQueueEntry].entryType == "PrepTime")
+                if (playList[currentQueueEntry].entryType == "Testing")
                 {
-                    if (currentSeconds == 60 && practice.prefs["useNoFly"] == "1")
+                    if (playList[currentQueueEntry].spokenTextOnCountdown != null && currentSeconds >= 15 && !playList[currentQueueEntry].timerLastTwenty && !playList[currentQueueEntry].timerLastThirty)
                     {
-                        speakText += ". - All pilots must not be flying during this final minnit.";
+                        speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
                     }
-                    if (practice.prefs["useNoFly"] == "1" && currentSeconds == 80)
+                    if (currentSeconds == 15)
                     {
-                        speakText = "All pilots must start landing from test flights.";
+                        speakText += " All pilots must start landing from test flights.";
                     }
-                    if (practice.prefs["useNoFly"] == "1" && currentSeconds == 75)
+                }
+                if (playList[currentQueueEntry].entryType == "NoFly")
+                {
+                    if (playList[currentQueueEntry].spokenTextOnCountdown != null && currentSeconds == 30)
                     {
-                        speakText = "Fifteen seconds till no fly time.";
-                    }
-                    if (practice.prefs["useNoFly"] == "1" && currentSeconds == 70)
-                    {
-                        speakText = "Ten seconds till no fly time.";
-                    }
-                    if (practice.prefs["useNoFly"] == "1" && currentSeconds == 65)
-                    {
-                        speakText = "Five seconds till no fly time.";
+                        speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
                     }
                 }
 

@@ -18,6 +18,7 @@ public class Practice : MonoBehaviour
     public Dropdown prefsPrepTime;
     public Dropdown prefsBetweenRounds;
     public Toggle prefsUseLanding;
+    public Toggle prefsUse45Test;
     public Toggle prefsUseOneMinuteNoFly;
     public Toggle prefsAnnounceTasks;
     public List<PlayQueueEntry> playList = new List<PlayQueueEntry>();
@@ -129,11 +130,9 @@ public class Practice : MonoBehaviour
         msRuleStrings.Add("He must have lost the batteries in his hearing aid.");
         msRuleStrings.Add("He's finishing up the last sleave of girl scout cookies.");
         msRuleStrings.Add("Meditation takes a while.");
-        msRuleStrings.Add("You just can't fix stupid.");
         msRuleStrings.Add("I think he just got vaccinated in the bushes.");
         msRuleStrings.Add("Drinking 3 red bulls has made him a little shakey.");
         msRuleStrings.Add("He must have had the finish his Justin Beeber song to get in the groove.");
-        msRuleStrings.Add("Twitter was calling him to stop harassing Madonna.");
         msRuleStrings.Add("Remember kiddos, always bring a back up.");
         msRuleStrings.Add("The peanut butter sandwich is sticking to the roof of his mouth.");
 
@@ -226,6 +225,7 @@ public class Practice : MonoBehaviour
         prefs["prepTime"] = PlayerPrefs.GetString("prefsPrepTime", "5 Minutes");
         prefs["betweenRounds"] = PlayerPrefs.GetString("prefsBetweenRounds", "1 Minute");
         prefs["useLanding"] = PlayerPrefs.GetString("prefsUseLanding", "1");
+        prefs["use45Test"] = PlayerPrefs.GetString("prefsUse45Test", "0");
         prefs["useNoFly"] = PlayerPrefs.GetString("prefsUseNoFly", "0");
         prefs["announceTasks"] = PlayerPrefs.GetString("prefsAnnounceTasks", "0");
         prefs["repeatPlayList"] = PlayerPrefs.GetString("repeatPlayList", "0");
@@ -241,6 +241,7 @@ public class Practice : MonoBehaviour
         prefsBetweenRounds.RefreshShownValue();
 
         prefsUseLanding.SetIsOnWithoutNotify(prefs["useLanding"] == "1" ? true : false);
+        prefsUse45Test.SetIsOnWithoutNotify(prefs["use45Test"] == "1" ? true : false);
         prefsUseOneMinuteNoFly.SetIsOnWithoutNotify(prefs["useNoFly"] == "1" ? true : false);
         prefsAnnounceTasks.SetIsOnWithoutNotify(prefs["announceTasks"] == "1" ? true : false);
         if (queueControl.queueTimerRunning)
@@ -266,6 +267,7 @@ public class Practice : MonoBehaviour
         PlayerPrefs.SetString("prefsPrepTime", prefsPrepTime.options[prefsPrepTime.value].text);
         PlayerPrefs.SetString("prefsBetweenRounds", prefsBetweenRounds.options[prefsBetweenRounds.value].text);
         PlayerPrefs.SetString("prefsUseLanding", prefsUseLanding.isOn ? "1" : "0");
+        PlayerPrefs.SetString("prefsUse45Test", prefsUse45Test.isOn ? "1" : "0");
         PlayerPrefs.SetString("prefsUseNoFly", prefsUseOneMinuteNoFly.isOn ? "1" : "0");
         PlayerPrefs.SetString("prefsAnnounceTasks", prefsAnnounceTasks.isOn ? "1" : "0");
         PlayerPrefs.SetString("repeatPlayList", repeatToggle.isOn ? "1" : "0");
@@ -290,6 +292,8 @@ public class Practice : MonoBehaviour
         int prepTimeMinutes = getPrepTime();
         int betweenTimeSeconds = getBetweenTime();
         bool announceTasks = prefs["announceTasks"] == "1" ? true : false;
+        bool use45Test = prefs["use45Test"] == "1" ? true : false;
+        bool useNoFly = prefs["useNoFly"] == "1" ? true : false;
         bool useLanding = prefs["useLanding"] == "1" ? true : false;
         PlayQueueEntry tempEntry = new PlayQueueEntry();
         int groups = numGroups.value + 1;
@@ -326,8 +330,13 @@ public class Practice : MonoBehaviour
                     tempEntry.entryType = "Announce";
                     tempEntry.textDescription = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
                     tempEntry.spokenText = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
+                    tempEntry.estimatedSeconds = 2;
+                    if (announceTasks == false)
+                    {
+                        tempEntry.spokenText += " Preparation Time of " + prepTimeMinutes.ToString() + " minutes starts in 5, 4, 3, 2, 1, ";
+                        tempEntry.estimatedSeconds += 7;
+                    }
                     tempEntry.spokenTextWait = true;
-                    tempEntry.estimatedSeconds = 1;
                     playList.Add(tempEntry);
                     sequence += 1;
 
@@ -343,8 +352,7 @@ public class Practice : MonoBehaviour
                         tempEntry.textDescription = taskInfo.flight_type_name;
                         tempEntry.spokenText = taskInfo.flight_type_description;
                         tempEntry.estimatedSeconds = 2;
-                        // Add the prep time notice if they don't want to announce pilots
-                        tempEntry.spokenText += "...Preparation Time of " + prepTimeMinutes.ToString() + " minutes starts in...5...4...3...2...1...";
+                        tempEntry.spokenText += "...Preparation Time of " + prepTimeMinutes.ToString() + " minutes starts in 5, 4, 3, 2, 1, ";
                         tempEntry.estimatedSeconds += 7;
                         tempEntry.spokenTextWait = true;
                         playList.Add(tempEntry);
@@ -358,11 +366,33 @@ public class Practice : MonoBehaviour
                     tempEntry.round_number = 1;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "PrepTime";
-                    tempEntry.textDescription = convertSecondsToClockString(prepTimeMinutes * 60) + " Preparation Time";
+                    tempEntry.textDescription = convertSecondsToClockString(prepTimeMinutes * 60) + " Preparation Window";
                     tempEntry.spokenText = prepTimeMinutes.ToString() + " minutes remaining in prep time.";
                     tempEntry.spokenTextWait = false;
                     tempEntry.spokenPreDelay = 2.0;
-                    tempEntry.spokenTextOnCountdown = "before launch window";
+                    tempEntry.spokenTextOnCountdown = "";
+                    if (use45Test || useNoFly)
+                    {
+                        if( use45Test )
+                        {
+                            tempEntry.spokenText += " . There is no flying allowed during this time.";
+                            tempEntry.spokenTextOnCountdown += " of prep time before flight test window.";
+                        }
+                        else if( useNoFly )
+                        {
+                            tempEntry.spokenTextOnCountdown += " of prep time before no fly window.";
+                        }
+                        tempEntry.timerLastFive = true;
+                        tempEntry.endHornLength = 0;
+                    }
+                    else
+                    {
+                        tempEntry.spokenTextOnCountdown = " of prep time before working window";
+                        tempEntry.endHornLength = 3;
+                        tempEntry.timerEveryTenInLastMinute = true;
+                        tempEntry.timerLastTwenty = true;
+                        tempEntry.timerEveryFifteen = true;
+                    }
                     if (loops > 1)
                     {
                         tempEntry.spokenTextOnCountdown += " of Flight 1.";
@@ -371,15 +401,69 @@ public class Practice : MonoBehaviour
                     tempEntry.hasBeginHorn = true;
                     tempEntry.beginHornLength = 1;
                     tempEntry.timerSeconds = (prepTimeMinutes * 60);
-                    tempEntry.timerEveryFifteen = true;
                     tempEntry.timerEveryThirty = true;
-                    tempEntry.timerEveryTenInLastMinute = true;
-                    tempEntry.timerLastTwenty = true;
                     tempEntry.hasEndHorn = true;
-                    tempEntry.endHornLength = 3;
                     tempEntry.estimatedSeconds = (prepTimeMinutes * 60);
                     playList.Add(tempEntry);
                     sequence += 1;
+
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // Add 45s Test Time Entry
+                    if (use45Test == true)
+                    {
+                        tempEntry = new PlayQueueEntry();
+                        tempEntry.sequenceID = sequence;
+                        tempEntry.round_number = 1;
+                        tempEntry.group = group.ToString();
+                        tempEntry.entryType = "Testing";
+                        tempEntry.textDescription = "45 Second Flight Test Window";
+                        tempEntry.spokenText = "45 Second Flight Test Window. Pilots may now make test flights.";
+                        tempEntry.spokenTextOnCountdown = " before no fly window";
+                        tempEntry.estimatedSeconds = 45;
+                        tempEntry.spokenTextWait = true;
+                        tempEntry.spokenPreDelay = 1.5;
+                        tempEntry.hasEndHorn = true;
+                        tempEntry.hasTimer = true;
+                        tempEntry.timerSeconds = 45;
+                        tempEntry.timerEveryFifteen = true;
+                        tempEntry.timerLastFive = true;
+                        tempEntry.hasEndHorn = true;
+                        tempEntry.endHornLength = 0;
+                        playList.Add(tempEntry);
+                        sequence += 1;
+                    }
+
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // Add One Minute NoFly Entry
+                    if (useNoFly == true)
+                    {
+                        tempEntry = new PlayQueueEntry();
+                        tempEntry.sequenceID = sequence;
+                        tempEntry.round_number = 1;
+                        tempEntry.group = group.ToString();
+                        tempEntry.entryType = "NoFly";
+                        tempEntry.textDescription = "1:00 No Fly Window";
+                        tempEntry.spokenText = "1 Minute No Fly Window. Pilots must not be flying during this final minnit.";
+                        tempEntry.spokenTextOnCountdown = "before working window";
+                        if (loops > 1)
+                        {
+                            tempEntry.spokenTextOnCountdown += " of Flight 1.";
+                        }
+                        tempEntry.estimatedSeconds = 60;
+                        tempEntry.spokenTextWait = true;
+                        tempEntry.spokenPreDelay = 1.5;
+                        tempEntry.hasEndHorn = true;
+                        tempEntry.hasTimer = true;
+                        tempEntry.timerSeconds = 60;
+                        tempEntry.timerEveryFifteen = true;
+                        tempEntry.timerEveryThirty = true;
+                        tempEntry.timerEveryTenInLastMinute = true;
+                        tempEntry.timerLastTwenty = true;
+                        tempEntry.hasEndHorn = true;
+                        tempEntry.endHornLength = 3;
+                        playList.Add(tempEntry);
+                        sequence += 1;
+                    }
 
                     for (int loop = 1; loop <= loops; loop++)
                     {
@@ -391,9 +475,9 @@ public class Practice : MonoBehaviour
                             tempEntry.sequenceID = sequence;
                             tempEntry.round_number = 1;
                             tempEntry.group = group.ToString();
-                            tempEntry.entryType = "PrepTime";
-                            tempEntry.textDescription = "1:00 No Fly Time";
-                            tempEntry.spokenText = "1 Minute no fly time before launch window of Flight " + loop.ToString() + ".";
+                            tempEntry.entryType = "NoFly";
+                            tempEntry.textDescription = "1:00 No Fly Window";
+                            tempEntry.spokenText = "1 Minute no fly window before working window of Flight " + loop.ToString() + ".";
                             tempEntry.spokenPreDelay = 1.5;
                             tempEntry.spokenTextWait = false;
                             tempEntry.spokenTextOnCountdown = "before launch window of Flight " + loop.ToString() + ".";
@@ -438,7 +522,7 @@ public class Practice : MonoBehaviour
                         else
                         {
                             tempEntry.textDescription = convertSecondsToClockString(windowTime) + " Flight Window";
-                            tempEntry.spokenText = (windowTime / 60).ToString() + " minute flight window.";
+                            tempEntry.spokenText = (windowTime / 60).ToString() + " minute working window.";
                         }
                         tempEntry.spokenPreDelay = 3.5;
                         tempEntry.spokenTextWait = false;
@@ -557,7 +641,7 @@ public class Practice : MonoBehaviour
                         tempEntry.spokenText = taskInfo.flight_type_description;
                         tempEntry.estimatedSeconds = 4;
                         // Add the prep time notice if they don't want to announce pilots
-                        tempEntry.spokenText += "...Preparation Time of " + prepTimeMinutes.ToString() + " minutes starts in...5...4...3...2...1...";
+                        tempEntry.spokenText += ". Preparation Time of " + prepTimeMinutes.ToString() + " minutes starts in 5, 4, 3, 2, 1,  ";
                         tempEntry.estimatedSeconds += 6;
                         tempEntry.spokenTextWait = true;
                         playList.Add(tempEntry);
@@ -571,11 +655,11 @@ public class Practice : MonoBehaviour
                     tempEntry.round_number = 1;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "PrepTime";
-                    tempEntry.textDescription = convertSecondsToClockString(prepTimeMinutes * 60) + " Preparation Time";
-                    tempEntry.spokenText = prepTimeMinutes.ToString() + " minutes remaining in prep time";
+                    tempEntry.textDescription = convertSecondsToClockString(prepTimeMinutes * 60) + " Preparation Window";
+                    tempEntry.spokenText = prepTimeMinutes.ToString() + " minutes remaining in prep time.";
                     tempEntry.spokenTextWait = false;
                     tempEntry.spokenPreDelay = 2.0;
-                    tempEntry.spokenTextOnCountdown = "before launch window";
+                    tempEntry.spokenTextOnCountdown = " of prep time before working window";
                     tempEntry.hasTimer = true;
                     tempEntry.hasBeginHorn = true;
                     tempEntry.beginHornLength = 1;
@@ -597,8 +681,8 @@ public class Practice : MonoBehaviour
                     tempEntry.round_number = 1;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "Window";
-                    tempEntry.textDescription = convertSecondsToClockString(windowTime) + " Flight Window";
-                    tempEntry.spokenText = (windowTime / 60).ToString() + " minute flight window";
+                    tempEntry.textDescription = convertSecondsToClockString(windowTime) + " Flight Working Window";
+                    tempEntry.spokenText = (windowTime / 60).ToString() + " minute flight working window";
                     tempEntry.spokenPreDelay = 3.0;
                     tempEntry.spokenTextWait = false;
                     tempEntry.hasBeginHorn = false;

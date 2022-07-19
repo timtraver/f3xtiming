@@ -210,6 +210,7 @@ public class PracticeSerialClockBoard : MonoBehaviour
         if ( serialPort == null || ! serialPort.IsOpen)
         {
             OpenSerialPort();
+            return;
         }
         string sendString = "";
         // Send the data string in the format selected
@@ -237,18 +238,17 @@ public class PracticeSerialClockBoard : MonoBehaviour
                     case "LT":
                         colorString = "255 0 0";
                         break;
+                    case "NF":
+                        colorString = "254 0 0";
+                        break;
+                    case "TT":
+                        colorString = "255 127 0";
+                        break;
                     case "WT":
                         colorString = "0 255 0";
                         break;
                     case "PT":
-                        if (min == 0)
-                        {
-                            colorString = "255 127 0";
-                        }
-                        else
-                        {
-                            colorString = "200 200 200";
-                        }
+                        colorString = "200 200 200";
                         break;
                     case "DT":
                     case "ST":
@@ -262,10 +262,6 @@ public class PracticeSerialClockBoard : MonoBehaviour
                 min = Convert.ToInt32(timeString.Substring(0, 2));
                 sec = Convert.ToInt32(timeString.Substring(2));
                 totalSeconds = (60 * min) + sec;
-                if (queueControl.playList[queueControl.currentQueueEntry].entryType == "PrepTime" && queueControl.clockCurrentSeconds <= 60 && queueControl.practice.prefs["useNoFly"] == "1")
-                {
-                    windowType = "NF";
-                }
                 EventTask task = queueControl.practice.getRoundTask(round_number);
                 if (queueControl.queueTimerRunning)
                 {
@@ -319,6 +315,12 @@ public class PracticeSerialClockBoard : MonoBehaviour
                                 break;
                             case "PrepTime":
                                 type = "PT";
+                                break;
+                            case "Testing":
+                                type = "TT";
+                                break;
+                            case "NoFly":
+                                type = "NF";
                                 break;
                             case "Window":
                                 type = "WT";
