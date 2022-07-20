@@ -194,7 +194,7 @@ public class SerialClockBoard : MonoBehaviour
         if ( protocol == "Extended + Pandora")
         {
             // Let us send an initialization string
-            string sendString = "P|01|01|0|A - Last 5\r\n";
+            string sendString = "P|01|01|0|- - N/A\r\n";
             serialPort.Write(sendString);
             serialPort.BaseStream.Flush();
             sentToClock.text = sendString.Replace("\n", " ");
@@ -203,7 +203,7 @@ public class SerialClockBoard : MonoBehaviour
         return;
     }
 
-    public void SendSerialData(string timeString, string windowType = "DT", int round_number = 1, string group = "1" )
+    public void SendSerialData(string timeString, string windowType = "PT", int round_number = 1, string group = "1" )
     {
         if (currentSerialPort == "None" || serialPortIsOpening) { return; } // Don't do anything if the serial port chosen is none or is in the process of opening
         // Check to see if the serial port is open
@@ -270,7 +270,7 @@ public class SerialClockBoard : MonoBehaviour
                 }
                 else
                 {
-                    sendString = string.Format("P|{0:00}|{1}|{2}|{3}\r\n", round_number, group.PadLeft(2, '0'), 0, "A - Last 5");
+                    sendString = string.Format("P|{0:00}|{1}|{2}|{3}\r\n", round_number, group.PadLeft(2, '0'), 0, "- - N/A");
                     sendString += string.Format("R{0:00}G{1}T{2}{3}\r", round_number, group.PadLeft(2, '0'), timeString, windowType);
                 }
                 break;
@@ -357,14 +357,11 @@ public class SerialClockBoard : MonoBehaviour
                 }
                 else
                 {
-                    seconds = topClock.seconds;
-                    if (seconds != secondsOld)
+                    if (secondsOld != 0)
                     {
-                        // Let us update the board with the round and the group as the time
-                        string group = getGroup(queueControl.playList[queueControl.currentQueueEntry].group);
-                        if( group.Length == 1) { group = "0" + group; }
-                        SendSerialData(string.Format("{0:00}{1:00}", queueControl.playList[queueControl.currentQueueEntry].round_number, group), "ST", queueControl.playList[queueControl.currentQueueEntry].round_number, group);
-                        secondsOld = seconds;
+                        // Let us update the board with a 0:00 time
+                        SendSerialData(string.Format("{0:00}{1:00}", 0, 0), "ST", queueControl.playList[queueControl.currentQueueEntry].round_number, queueControl.playList[queueControl.currentQueueEntry].group);
+                        secondsOld = 0;
                     }
                 }
             }
@@ -381,7 +378,7 @@ public class SerialClockBoard : MonoBehaviour
                     if (seconds != secondsOld) // Send only when the seconds change
                     {
                         // Time has changed, so lets update the serialClock with value if needed
-                        SendSerialData(string.Format("{0:00}{1:00}", hour, minutes), "DT", 1, "01");
+                        SendSerialData(string.Format("{0:00}{1:00}", hour, minutes), "PT", 1, "01");
                         secondsOld = seconds;
                     }
                 }

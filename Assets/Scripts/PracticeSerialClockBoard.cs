@@ -193,17 +193,16 @@ public class PracticeSerialClockBoard : MonoBehaviour
         if (protocol == "Extended + Pandora")
         {
             // Let us send an initialization string
-            string sendString = "P|01|01|0|A - Last 5\r\n";
+            string sendString = "P|01|01|0|- - N/A\r\n";
             serialPort.Write( sendString );
             serialPort.BaseStream.Flush();
             sentToClock.text = sendString.Replace("\n", " ");
-            Debug.Log("Sent String to Serial port open " + sendString);
         }
         serialPortIsOpening = false;
         return;
     }
 
-    public void SendSerialData(string timeString, string windowType = "DT", int round_number = 0, string group = "" )
+    public void SendSerialData(string timeString, string windowType = "PT", int round_number = 0, string group = "" )
     {
         if (currentSerialPort == "None" || serialPortIsOpening) { return; } // Don't do anything if the serial port chosen is none or is in the process of opening
         // Check to see if the serial port is open
@@ -270,7 +269,7 @@ public class PracticeSerialClockBoard : MonoBehaviour
                 }
                 else
                 {
-                    sendString = string.Format("P|{0:00}|{1}|{2}|{3}\r\n", round_number, group.PadLeft(2, '0'), 0, "A - Last 5");
+                    sendString = string.Format("P|{0:00}|{1}|{2}|{3}\r\n", round_number, group.PadLeft(2, '0'), 0, "- - N/A");
                     sendString += string.Format("R{0:00}G{1}T{2}{3}\r", round_number, group.PadLeft(2, '0'), timeString, windowType);
                 }
                 break;
@@ -360,7 +359,7 @@ public class PracticeSerialClockBoard : MonoBehaviour
                     if (seconds != secondsOld) // Send only when the seconds change
                     {
                         // Time has changed, so lets update the serialClock with value if needed
-                        SendSerialData(string.Format("{0:00}{1:00}", hour, minutes), "DT", 1, "01");
+                        SendSerialData(string.Format("{0:00}{1:00}", hour, minutes), "PT", 1, "01");
                         secondsOld = seconds;
                     }
                 }

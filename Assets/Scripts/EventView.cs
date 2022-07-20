@@ -540,7 +540,7 @@ public class EventView : MonoBehaviour
                     {
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = round.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "Testing";
                         tempEntry.textDescription = "45 Second Flight Test Window";
@@ -548,10 +548,11 @@ public class EventView : MonoBehaviour
                         tempEntry.spokenTextOnCountdown = " before no fly window";
                         tempEntry.estimatedSeconds = 45;
                         tempEntry.spokenTextWait = true;
-                        tempEntry.spokenPreDelay = 1.5;
+                        tempEntry.spokenPreDelay = 1.0;
                         tempEntry.hasEndHorn = true;
                         tempEntry.hasTimer = true;
                         tempEntry.timerSeconds = 45;
+                        tempEntry.timerEveryTenInLastMinute = true;
                         tempEntry.timerEveryFifteen = true;
                         tempEntry.timerLastFive = true;
                         tempEntry.hasEndHorn = true;
@@ -566,7 +567,7 @@ public class EventView : MonoBehaviour
                     {
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = round.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "NoFly";
                         tempEntry.textDescription = "1:00 No Fly Window";

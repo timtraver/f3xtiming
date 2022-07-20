@@ -435,14 +435,12 @@ public class PracticeQueueControl : MonoBehaviour
                 }
                 if (playList[currentQueueEntry].entryType == "Testing")
                 {
-                    if (playList[currentQueueEntry].spokenTextOnCountdown != null && currentSeconds >= 15 && !playList[currentQueueEntry].timerLastTwenty && !playList[currentQueueEntry].timerLastThirty)
+                    if( currentSeconds == 10) { speakText = "10 seconds"; }
+                    if (playList[currentQueueEntry].spokenTextOnCountdown != null && currentSeconds >= 10 && !playList[currentQueueEntry].timerLastTwenty && !playList[currentQueueEntry].timerLastThirty)
                     {
                         speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
                     }
-                    if (currentSeconds == 15)
-                    {
-                        speakText += " All pilots must start landing from test flights.";
-                    }
+                    if( currentSeconds == 40) { speakText = ""; }
                 }
                 if (playList[currentQueueEntry].entryType == "NoFly")
                 {

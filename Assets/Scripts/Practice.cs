@@ -325,7 +325,7 @@ public class Practice : MonoBehaviour
                     // Add Round and Group header
                     tempEntry = new PlayQueueEntry();
                     tempEntry.sequenceID = sequence;
-                    tempEntry.round_number = 1;
+                    tempEntry.round_number = taskInfo.round_number;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "Announce";
                     tempEntry.textDescription = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
@@ -346,7 +346,7 @@ public class Practice : MonoBehaviour
                     {
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "Announce";
                         tempEntry.textDescription = taskInfo.flight_type_name;
@@ -363,7 +363,7 @@ public class Practice : MonoBehaviour
                     // Preparation time entry
                     tempEntry = new PlayQueueEntry();
                     tempEntry.sequenceID = sequence;
-                    tempEntry.round_number = 1;
+                    tempEntry.round_number = taskInfo.round_number;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "PrepTime";
                     tempEntry.textDescription = convertSecondsToClockString(prepTimeMinutes * 60) + " Preparation Window";
@@ -413,7 +413,7 @@ public class Practice : MonoBehaviour
                     {
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "Testing";
                         tempEntry.textDescription = "45 Second Flight Test Window";
@@ -421,10 +421,11 @@ public class Practice : MonoBehaviour
                         tempEntry.spokenTextOnCountdown = " before no fly window";
                         tempEntry.estimatedSeconds = 45;
                         tempEntry.spokenTextWait = true;
-                        tempEntry.spokenPreDelay = 1.5;
+                        tempEntry.spokenPreDelay = 1.0;
                         tempEntry.hasEndHorn = true;
                         tempEntry.hasTimer = true;
                         tempEntry.timerSeconds = 45;
+                        tempEntry.timerEveryTenInLastMinute = true;
                         tempEntry.timerEveryFifteen = true;
                         tempEntry.timerLastFive = true;
                         tempEntry.hasEndHorn = true;
@@ -439,7 +440,7 @@ public class Practice : MonoBehaviour
                     {
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "NoFly";
                         tempEntry.textDescription = "1:00 No Fly Window";
@@ -473,7 +474,7 @@ public class Practice : MonoBehaviour
                             // Add 1 minute in between flights windows (for f3k C tasks only
                             tempEntry = new PlayQueueEntry();
                             tempEntry.sequenceID = sequence;
-                            tempEntry.round_number = 1;
+                            tempEntry.round_number = taskInfo.round_number;
                             tempEntry.group = group.ToString();
                             tempEntry.entryType = "NoFly";
                             tempEntry.textDescription = "1:00 No Fly Window";
@@ -511,7 +512,7 @@ public class Practice : MonoBehaviour
                         // Window time entry
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.entryType = "Window";
                         tempEntry.group = group.ToString();
                         if (loops > 1)
@@ -551,7 +552,7 @@ public class Practice : MonoBehaviour
                         {
                             tempEntry = new PlayQueueEntry();
                             tempEntry.sequenceID = sequence;
-                            tempEntry.round_number = 1;
+                            tempEntry.round_number = taskInfo.round_number;
                             tempEntry.group = group.ToString();
                             tempEntry.entryType = "Landing";
                             tempEntry.textDescription = "30 Second Landing Window";
@@ -591,7 +592,7 @@ public class Practice : MonoBehaviour
                         }
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "Wait";
                         tempEntry.textDescription = betweenString + " Group Separation Time";
@@ -618,7 +619,7 @@ public class Practice : MonoBehaviour
                     // Add Round and Group header
                     tempEntry = new PlayQueueEntry();
                     tempEntry.sequenceID = sequence;
-                    tempEntry.round_number = 1;
+                    tempEntry.round_number = taskInfo.round_number;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "Announce";
                     tempEntry.textDescription = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
@@ -634,7 +635,7 @@ public class Practice : MonoBehaviour
                     {
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "Announce";
                         tempEntry.textDescription = taskInfo.flight_type_name;
@@ -652,7 +653,7 @@ public class Practice : MonoBehaviour
                     // Preparation time entry
                     tempEntry = new PlayQueueEntry();
                     tempEntry.sequenceID = sequence;
-                    tempEntry.round_number = 1;
+                    tempEntry.round_number = taskInfo.round_number;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "PrepTime";
                     tempEntry.textDescription = convertSecondsToClockString(prepTimeMinutes * 60) + " Preparation Window";
@@ -678,7 +679,7 @@ public class Practice : MonoBehaviour
                     // Window time entry
                     tempEntry = new PlayQueueEntry();
                     tempEntry.sequenceID = sequence;
-                    tempEntry.round_number = 1;
+                    tempEntry.round_number = taskInfo.round_number;
                     tempEntry.group = group.ToString();
                     tempEntry.entryType = "Window";
                     tempEntry.textDescription = convertSecondsToClockString(windowTime) + " Flight Working Window";
@@ -707,7 +708,7 @@ public class Practice : MonoBehaviour
                     {
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "Landing";
                         tempEntry.textDescription = "1 Minute Landing Window";
@@ -741,7 +742,7 @@ public class Practice : MonoBehaviour
                         }
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
-                        tempEntry.round_number = 1;
+                        tempEntry.round_number = taskInfo.round_number;
                         tempEntry.group = group.ToString();
                         tempEntry.entryType = "Wait";
                         tempEntry.textDescription = betweenString + " Group Separation Time";
