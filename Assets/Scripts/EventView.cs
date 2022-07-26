@@ -395,6 +395,7 @@ public class EventView : MonoBehaviour
             foreach (EventRound round in rounds)
             {
                 int loops = 1;
+                if ( round.flights.Length == 0) { continue; }
                 if (round.flights[0].flight_type_code == "f3k_c") { loops = 3; }
                 if (round.flights[0].flight_type_code == "f3k_c2") { loops = 4; }
                 if (round.flights[0].flight_type_code == "f3k_c3") { loops = 5; }
