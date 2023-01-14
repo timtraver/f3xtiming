@@ -405,6 +405,13 @@ public class FlightDescriptions
             description: "F3j Duration with precision landing. Ten minute working window.",
             windowTime: 600
         ));
+        // F3L Flight
+        flights.Add(new FlightDescription(
+            code: "f3l_duration",
+            name: "F3L F3RES Duration",
+            description: "F3L, F3RES duration with precision landing. Six minute working window.",
+            windowTime: 360
+        ));
         // F5J Flight
         flights.Add(new FlightDescription(
             code: "f5j_duration",
