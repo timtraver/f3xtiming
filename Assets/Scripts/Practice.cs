@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 using Crosstales.RTVoice;
 using Crosstales.RTVoice.Model;
-using UnityEditor.Localization.Plugins.XLIFF.V12;
 
 public class Practice : MonoBehaviour
 {
