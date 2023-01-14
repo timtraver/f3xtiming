@@ -106,6 +106,7 @@ public class EventSearch : MonoBehaviour
         this.types.Add(new EventType(typeCode: "f3f", typeDescription: "F3F Slope Racing"));
         this.types.Add(new EventType(typeCode: "f3j", typeDescription: "F3J Thermal Duration"));
         this.types.Add(new EventType(typeCode: "f3k", typeDescription: "F3K Hand Launch"));
+        this.types.Add(new EventType(typeCode: "f3l", typeDescription: "F3L F3RES"));
         this.types.Add(new EventType(typeCode: "TD", typeDescription: "TD Thermal Duration"));
         this.types.Add(new EventType(typeCode: "mom", typeDescription: "MOM Slope Racing"));
         this.types.Add(new EventType(typeCode: "gps", typeDescription: "GPS Triangle Racing"));
