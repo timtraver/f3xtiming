@@ -278,6 +278,27 @@ public class FlightDescriptions
     public FlightDescriptions()
     {
         // Initialize the flight list
+        // F3B Duration Window
+        flights.Add(new FlightDescription(
+            code: "f3b_duration",
+            name: "F3B Duration",
+            description: "F3B duration with precision landing. Twelve minute working window.",
+            windowTime: 720
+        ));
+        // F3B Distance Window
+        flights.Add(new FlightDescription(
+            code: "f3b_distance",
+            name: "F3B Distance",
+            description: "F3B distance. Seven minute working window.",
+            windowTime: 420
+        ));
+        // F3B Speed Window
+        flights.Add(new FlightDescription(
+            code: "f3b_speed",
+            name: "F3B Speed",
+            description: "F3B speed. Four minute working window.",
+            windowTime: 240
+        ));
         flights.Add(new FlightDescription(
             code: "f3k_a",
             name: "F3K Task A - Last 1 x 5:00 in 7:00",
@@ -445,6 +466,7 @@ public class FlightDescriptions
             description: "GPS Triangle speed. Fastest lap around GPS triangle. Five minute working window.",
             windowTime: 300
         ));
+
         return;
     }
 }
