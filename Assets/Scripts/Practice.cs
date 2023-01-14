@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 using Crosstales.RTVoice;
 using Crosstales.RTVoice.Model;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 
 public class Practice : MonoBehaviour
 {
@@ -330,6 +331,14 @@ public class Practice : MonoBehaviour
                     tempEntry.entryType = "Announce";
                     tempEntry.textDescription = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
                     tempEntry.spokenText = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
+                    if (taskInfo.round_number != 1)
+                    {
+                        tempEntry.spokenPreDelay = 2.0;
+                    }
+                    else
+                    {
+                        tempEntry.spokenPreDelay = 0.0;
+                    }
                     tempEntry.estimatedSeconds = 2;
                     if (announceTasks == false)
                     {
@@ -523,7 +532,7 @@ public class Practice : MonoBehaviour
                         else
                         {
                             tempEntry.textDescription = convertSecondsToClockString(windowTime) + " Flight Window";
-                            tempEntry.spokenText = (windowTime / 60).ToString() + " minute working window.";
+                            tempEntry.spokenText = (windowTime / 60).ToString() + " minnit working window.";
                         }
                         tempEntry.spokenPreDelay = 3.5;
                         tempEntry.spokenTextWait = false;
@@ -610,7 +619,7 @@ public class Practice : MonoBehaviour
                         sequence += 1;
                     }
                 }
-                if (taskInfo.flight_type_code.StartsWith("f3j") || taskInfo.flight_type_code.StartsWith("f5j") || taskInfo.flight_type_code.StartsWith("td") || taskInfo.flight_type_code.StartsWith("gps"))
+                if (taskInfo.flight_type_code.StartsWith("f3j") || taskInfo.flight_type_code.StartsWith("f3l") || taskInfo.flight_type_code.StartsWith("f5j") || taskInfo.flight_type_code.StartsWith("td") || taskInfo.flight_type_code.StartsWith("gps"))
                 {
                     // Build the f3j or f5j play list
 
@@ -625,6 +634,14 @@ public class Practice : MonoBehaviour
                     tempEntry.textDescription = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
                     tempEntry.spokenText = "Round " + taskInfo.round_number.ToString() + " Group " + group.ToString();
                     tempEntry.spokenTextWait = true;
+                    if (taskInfo.round_number != 1)
+                    {
+                        tempEntry.spokenPreDelay = 2.0;
+                    }
+                    else
+                    {
+                        tempEntry.spokenPreDelay = 0.0;
+                    }
                     tempEntry.estimatedSeconds = 2;
                     playList.Add(tempEntry);
                     sequence += 1;
