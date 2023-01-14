@@ -619,7 +619,7 @@ public class Practice : MonoBehaviour
                         sequence += 1;
                     }
                 }
-                if (taskInfo.flight_type_code.StartsWith("f3j") || taskInfo.flight_type_code.StartsWith("f3l") || taskInfo.flight_type_code.StartsWith("f5j") || taskInfo.flight_type_code.StartsWith("td") || taskInfo.flight_type_code.StartsWith("gps"))
+                if (taskInfo.flight_type_code.StartsWith("f3j") || taskInfo.flight_type_code.StartsWith("f3l") || taskInfo.flight_type_code.StartsWith("f5j") || taskInfo.flight_type_code.StartsWith("td") || taskInfo.flight_type_code.StartsWith("gps") || taskInfo.flight_type_code.StartsWith("f3b"))
                 {
                     // Build the f3j or f5j play list
 
