@@ -834,6 +834,12 @@ public class QueueControl : MonoBehaviour
             backward10Button.interactable = false;
         }
 
+        // Toggle the play/pause button if the spacebar is tapped
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TogglePlayPause();
+        }
+
         // This is the main timing loop, so execute things if we need to
         if ( queueTimerRunning == true)
         {
