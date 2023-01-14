@@ -836,7 +836,7 @@ public class QueueControl : MonoBehaviour
 
         // Toggle the play/pause button if the spacebar is tapped
         if (Input.GetKeyDown(KeyCode.Space))
-        {
+        {                
             TogglePlayPause();
         }
 
