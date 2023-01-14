@@ -442,7 +442,14 @@ public class EventView : MonoBehaviour
                         tempEntry.spokenText += ". Preparation Time of " + prepTimeMinutes.ToString() + " minutes starts in 5, 4, 3, 2, 1, ";
                         tempEntry.estimatedSeconds += 7;
                     }
-                    tempEntry.spokenPreDelay = 2.0;
+                    if (round.round_number != 1)
+                    {
+                        tempEntry.spokenPreDelay = 2.0;
+                    }
+                    else
+                    {
+                        tempEntry.spokenPreDelay = 0.0;
+                    }
                     tempEntry.spokenTextWait = true;
                     playList.Add(tempEntry);
                     sequence += 1;
@@ -653,7 +660,7 @@ public class EventView : MonoBehaviour
                         else
                         {
                             tempEntry.textDescription = convertSecondsToClockString(windowTime) + " Flight Window";
-                            tempEntry.spokenText = (windowTime / 60).ToString() + " minute working window.";
+                            tempEntry.spokenText = (windowTime / 60).ToString() + " minnit working window.";
                         }
                         tempEntry.spokenPreDelay = 3.5;
                         tempEntry.spokenTextWait = false;
@@ -743,7 +750,7 @@ public class EventView : MonoBehaviour
                 }
             }
         }
-        if ( e.eventInfo.event_type_code == "f3j" || e.eventInfo.event_type_code == "f5j" || e.eventInfo.event_type_code == "td" || e.eventInfo.event_type_code == "gps")
+        if ( e.eventInfo.event_type_code == "f3j" || e.eventInfo.event_type_code == "f3l" || e.eventInfo.event_type_code == "f5j" || e.eventInfo.event_type_code == "td" || e.eventInfo.event_type_code == "gps")
         {
             // Build the f3j or f5j play list
             foreach( EventRound round in rounds)
@@ -787,7 +794,14 @@ public class EventView : MonoBehaviour
                         tempEntry.textDescription = "Round " + round.round_number.ToString() + " Group " + group;
                         tempEntry.spokenText = "Round " + round.round_number.ToString() + ", group " + group;
                     }
-                    tempEntry.spokenPreDelay = 2.0;
+                    if (round.round_number != 1)
+                    {
+                        tempEntry.spokenPreDelay = 2.0;
+                    }
+                    else
+                    {
+                        tempEntry.spokenPreDelay = 0.0;
+                    }
                     tempEntry.spokenTextWait = true;
                     tempEntry.estimatedSeconds = 2;
                     playList.Add(tempEntry);
@@ -868,7 +882,7 @@ public class EventView : MonoBehaviour
                     tempEntry.group = group;
                     tempEntry.entryType = "Window";
                     tempEntry.textDescription = convertSecondsToClockString(windowTime) + " Flight Working Window";
-                    tempEntry.spokenText = (windowTime / 60).ToString() + " minute flight working window";
+                    tempEntry.spokenText = (windowTime / 60).ToString() + " minnit flight working window";
                     tempEntry.spokenPreDelay = 3.0;
                     tempEntry.spokenTextWait = false;
                     tempEntry.hasBeginHorn = false;
