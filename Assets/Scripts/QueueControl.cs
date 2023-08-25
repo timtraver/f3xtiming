@@ -6,6 +6,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using Crosstales.RTVoice;
+using System.Security.Cryptography;
 
 public class QueueControl : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class QueueControl : MonoBehaviour
     public Button backward10Button;
     public Text clockText;
     public ScrollRect playListScroll;
+    public ScrollRect drawListScroll;
     public Sprite playImage;
     public Sprite pauseImage;
     public LoadingVoicePopup loadingVoicePopup;
@@ -37,6 +39,7 @@ public class QueueControl : MonoBehaviour
     public int lastQueueEntry;
     public bool goToNextQueueEntry;
     public float scrollValue = 1.0f;
+    public float drawScrollValue = 1.0f;
     public List<PlayQueueEntry> playList;
     public bool noSpeakEndEvent;
 
@@ -62,6 +65,7 @@ public class QueueControl : MonoBehaviour
         noSpeakEndEvent = false;
         playList = e.playList;
         playListScroll.verticalNormalizedPosition = 1.0f;
+        drawListScroll.verticalNormalizedPosition = 1.0f;
         // Now load the playlist state if needed
         LoadQueueState();
         return;
@@ -214,6 +218,42 @@ public class QueueControl : MonoBehaviour
         }
         if (scrollValue < 0) { scrollValue = 0f; }
         if (scrollValue > 1) { scrollValue = 1f; }
+
+        if (playList[currentQueueEntry].entryType == "RoundAnnounce")
+        {
+            // Update draw scroll to be at the same place, but only on announce tasks so it doesn't do it every time
+            // Determine where it should be based on the round and group
+            int drawround = playList[currentQueueEntry].round_number;
+            string drawgroup = playList[currentQueueEntry].group;
+            // Step through the rounds and determine how many entries until we get to that round and group
+            int drawentries = 0;
+            int lastgroup = 0;
+            string oldgroup = "old";
+            int lastgroupsize = 0;
+            foreach (EventRound round in e.rounds)
+            {
+                foreach (EventRoundFlight flight in round.flights)
+                {
+                    if (flight.group != oldgroup && lastgroup == 1) { break; }
+                    if (flight.group != oldgroup) { drawentries++; }
+                    drawentries++;
+                    if (round.round_number == drawround && flight.group == drawgroup) { lastgroup = 1; }
+                    if (lastgroup == 1) { lastgroupsize++; }
+                    oldgroup = flight.group;
+                }
+                if (lastgroup == 1) { break; }
+            }
+            lastgroupsize++; // add the header entry
+            if (drawentries <= lastgroupsize)
+            {
+                drawScrollValue = 1.0f;
+            }
+            else
+            {
+                drawScrollValue = 1.0f - ((float)drawentries - (float)lastgroupsize) / (float)((e.numberDrawRoundDisplayEntries - 19));
+            }
+            drawListScroll.verticalNormalizedPosition = drawScrollValue;
+        }
         return;
     }
     public void UpdateProgressBar()
@@ -313,6 +353,7 @@ public class QueueControl : MonoBehaviour
             }
             UpdateVerticalScroll();
             playListScroll.verticalNormalizedPosition = scrollValue;
+            drawListScroll.verticalNormalizedPosition = drawScrollValue;
         }
         if (clockTimerRunning == true)
         {
@@ -451,6 +492,7 @@ public class QueueControl : MonoBehaviour
             if (playList[currentQueueEntry].timerEveryThirty && currentSeconds % 30 == 0) { speak = true; }
             if (playList[currentQueueEntry].entryType == "Testing" && currentSeconds == 15) { speak = true; }
             if (playList[currentQueueEntry].entryType == "PrepTime" && currentSeconds == 15) { speak = true; }
+            if (playList[currentQueueEntry].entryType == "Wait" && currentSeconds % 30 == 0) { speak = true; }
             if (currentSeconds == Convert.ToInt32( clockTotalSeconds )) { speak = false; }
             if (currentSeconds == 0 ) { speak = false; }
 
@@ -468,7 +510,7 @@ public class QueueControl : MonoBehaviour
                     int sec = Convert.ToInt32(currentSeconds % 60);
                     if (sec == 0)
                     {
-                        speakText = min.ToString() + " minute";
+                        speakText = min.ToString() + " minnit";
                         if (min > 1)
                         {
                             speakText += "s";
@@ -521,6 +563,21 @@ public class QueueControl : MonoBehaviour
                         speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
                     }
                     if (currentSeconds == 40) { speakText = ""; }
+                }
+                if (playList[currentQueueEntry].entryType == "Wait")
+                {
+                    if (playList[currentQueueEntry].spokenTextOnCountdown != null)
+                    {
+                        speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
+                    }
+                }
+                if (playList[currentQueueEntry].entryType == "Landing")
+                {
+                    if (currentSeconds == 10) { speakText = "10 seconds"; }
+                    if (playList[currentQueueEntry].spokenTextOnCountdown != null && currentSeconds >= 10 && !playList[currentQueueEntry].timerLastTwenty && !playList[currentQueueEntry].timerLastThirty)
+                    {
+                        speakText += " " + playList[currentQueueEntry].spokenTextOnCountdown;
+                    }
                 }
                 if (playList[currentQueueEntry].entryType == "NoFly")
                 {
