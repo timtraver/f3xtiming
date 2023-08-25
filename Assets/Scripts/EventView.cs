@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 using Crosstales.RTVoice;
 using Crosstales.RTVoice.Model;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 
 public class EventView : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class EventView : MonoBehaviour
     public DrawDisplay drawDisplayPrefab;
     public DrawRoundDisplay drawRoundDisplayPrefab;
     public DrawDisplaySpacer drawRoundDisplaySpacerPrefab;
+    public int numberDrawRoundDisplayEntries;
     public Text eventTitle;
     public List<Voice> voices;
     public Dropdown prefsHorn;
@@ -29,6 +31,7 @@ public class EventView : MonoBehaviour
     public Dropdown prefsVoice;
     public Toggle prefsAnnouncePilots;
     public Dropdown prefsPrepTime;
+    public Dropdown prefsBetweenGroups;
     public Dropdown prefsBetweenRounds;
     public Toggle prefsUseLanding;
     public Toggle prefsUse45Test;
@@ -147,6 +150,7 @@ public class EventView : MonoBehaviour
     }
     public void ListDraw()
     {
+        numberDrawRoundDisplayEntries = 0;
         // Destroy any existing child lines before creating new ones
         foreach (Transform child in drawListObject)
         {
@@ -155,25 +159,31 @@ public class EventView : MonoBehaviour
         // Now lets add the pilot lines
         foreach (EventRound round in rounds)
         {
-            DrawRoundDisplay displayRound = (DrawRoundDisplay)Instantiate(this.drawRoundDisplayPrefab);
-            displayRound.transform.SetParent(drawListObject, false);
-            displayRound.Prime(round);
-            string oldgroup = "";
+            //DrawRoundDisplay displayRound = (DrawRoundDisplay)Instantiate(this.drawRoundDisplayPrefab);
+            //displayRound.transform.SetParent(drawListObject, false);
+            //displayRound.Prime(round);
+            string oldgroup = "old";
             foreach(EventRoundFlight flight in round.flights)
             {
                 if (oldgroup != "" && flight.group != oldgroup)
                 {
-                    // This is the start of a new group, so put a spacer object in place
-                    DrawDisplaySpacer displaySpacer = (DrawDisplaySpacer)Instantiate(this.drawRoundDisplaySpacerPrefab);
-                    displaySpacer.transform.SetParent(drawListObject, false);
+                    // This is the start of a new group, so put a round and group header in place
+                    DrawRoundDisplay displayRound = (DrawRoundDisplay)Instantiate(this.drawRoundDisplayPrefab);
+                    displayRound.transform.SetParent(drawListObject, false);
+                    displayRound.Prime(round, flight.group);
+                    numberDrawRoundDisplayEntries++;
+
+                    //DrawDisplaySpacer displaySpacer = (DrawDisplaySpacer)Instantiate(this.drawRoundDisplaySpacerPrefab);
+                    //displaySpacer.transform.SetParent(drawListObject, false);
                 }
                 DrawDisplay displayFlight = (DrawDisplay)Instantiate(this.drawDisplayPrefab);
                 displayFlight.transform.SetParent(drawListObject, false);
                 displayFlight.Prime(flight);
+                numberDrawRoundDisplayEntries++;
                 oldgroup = flight.group;
             }
-            DrawDisplaySpacer displaySpacer2 = (DrawDisplaySpacer)Instantiate(this.drawRoundDisplaySpacerPrefab);
-            displaySpacer2.transform.SetParent(drawListObject, false);
+            //DrawDisplaySpacer displaySpacer2 = (DrawDisplaySpacer)Instantiate(this.drawRoundDisplaySpacerPrefab);
+            //displaySpacer2.transform.SetParent(drawListObject, false);
         }
         return;
     }
@@ -224,6 +234,7 @@ public class EventView : MonoBehaviour
         msRuleStrings.Add("Twitter was calling him to stop harassing Madonna.");
         msRuleStrings.Add("Remember kiddos, always bring a back up.");
         msRuleStrings.Add("The peanut butter sandwich is sticking to the roof of his mouth.");
+        msRuleStrings.Shuffle();
 
         if (queueControl.clockTimerRunning)
         {
@@ -234,9 +245,10 @@ public class EventView : MonoBehaviour
         string insultString = msRuleStrings[insult];
         Speaker.Instance.Speak("Attention, the mike smith rule has been called. " + insultString + " Please hold while we remedy the situation.", audioSource, Speaker.Instance.VoiceForName(prefs["voice"]), true);
         insult++;
-        if (insult >= msRuleStrings.Count) { insult = 0; }
+        if (insult >= msRuleStrings.Count) { msRuleStrings.Shuffle(); insult = 0; }
         return;
     }
+
     // Function to initialize all of the preference values and lists
     public void InitializePrefs()
     {
@@ -313,7 +325,8 @@ public class EventView : MonoBehaviour
         prefs["voice"] = PlayerPrefs.GetString("prefsVoice", "Samantha");
         prefs["announcePilots"] = PlayerPrefs.GetString("prefsAnnouncePilots", "1");
         prefs["prepTime"] = PlayerPrefs.GetString("prefsPrepTime", "5 Minutes");
-        prefs["betweenRounds"] = PlayerPrefs.GetString("prefsBetweenRounds", "1 Minute");
+        prefs["betweenGroups"] = PlayerPrefs.GetString("prefsBetweenGroups", "None");
+        prefs["betweenRounds"] = PlayerPrefs.GetString("prefsBetweenRounds", "None");
         prefs["useLanding"] = PlayerPrefs.GetString("prefsUseLanding", "1");
         prefs["use45Test"] = PlayerPrefs.GetString("prefsUse45Test", "0");
         prefs["useNoFly"] = PlayerPrefs.GetString("prefsUseNoFly", "0");
@@ -329,6 +342,8 @@ public class EventView : MonoBehaviour
         prefsPrepTime.SetValueWithoutNotify( prefsPrepTime.options.FindIndex((i) => { return i.text.Equals(prefs["prepTime"]); }) );
         prefsPrepTime.RefreshShownValue();
 
+        prefsBetweenGroups.SetValueWithoutNotify(prefsBetweenGroups.options.FindIndex((i) => { return i.text.Equals(prefs["betweenGroups"]); }));
+        prefsBetweenGroups.RefreshShownValue();
         prefsBetweenRounds.SetValueWithoutNotify( prefsBetweenRounds.options.FindIndex((i) => { return i.text.Equals(prefs["betweenRounds"]); }));
         prefsBetweenRounds.RefreshShownValue();
 
@@ -351,6 +366,7 @@ public class EventView : MonoBehaviour
         PlayerPrefs.SetString("prefsVoice", prefsVoice.options[prefsVoice.value].text);
         PlayerPrefs.SetString("prefsAnnouncePilots", prefsAnnouncePilots.isOn?"1":"0");
         PlayerPrefs.SetString("prefsPrepTime", prefsPrepTime.options[prefsPrepTime.value].text);
+        PlayerPrefs.SetString("prefsBetweenGroups", prefsBetweenGroups.options[prefsBetweenGroups.value].text);
         PlayerPrefs.SetString("prefsBetweenRounds", prefsBetweenRounds.options[prefsBetweenRounds.value].text);
         PlayerPrefs.SetString("prefsUseLanding", prefsUseLanding.isOn ? "1" : "0");
         PlayerPrefs.SetString("prefsUse45Test", prefsUse45Test.isOn ? "1" : "0");
@@ -380,7 +396,8 @@ public class EventView : MonoBehaviour
 
         int sequence = 1;
         int prepTimeMinutes = getPrepTime();
-        int betweenTimeSeconds = getBetweenTime();
+        int betweenGroupTimeSeconds = getBetweenGroupTime();
+        int betweenRoundTimeSeconds = getBetweenRoundTime();
         bool announcePilots = prefs["announcePilots"] == "1" ? true : false;
         bool announceTasks = prefs["announceTasks"] == "1" ? true : false;
         bool use45Test = prefs["use45Test"] == "1" ? true : false;
@@ -399,11 +416,14 @@ public class EventView : MonoBehaviour
                 if (round.flights[0].flight_type_code == "f3k_c") { loops = 3; }
                 if (round.flights[0].flight_type_code == "f3k_c2") { loops = 4; }
                 if (round.flights[0].flight_type_code == "f3k_c3") { loops = 5; }
-
+                // Set lastRound variable
+                bool lastRound = round.round_number == rounds.Count ? true : false;
                 EventTask taskInfo = getTask(round.round_number);
                 int windowTime = taskInfo.event_task_time_choice;
                 foreach (string group in getGroupsInRound(round.round_number))
                 {
+                    // Set lastGroup variable
+                    bool lastGroup = groups.IndexOf(group) == groups.Count - 1 ? true : false;
                     // Get pilot list for this group if needed
                     List<String> pilotList = getPilotList(round.round_number, group);
 
@@ -425,7 +445,7 @@ public class EventView : MonoBehaviour
                     tempEntry.sequenceID = sequence;
                     tempEntry.round_number = round.round_number;
                     tempEntry.group = group;
-                    tempEntry.entryType = "Announce";
+                    tempEntry.entryType = "RoundAnnounce";
                     if (IsReflightGroup(round.round_number, group))
                     {
                         tempEntry.textDescription = "Round " + round.round_number.ToString() + " Reflight Group " + group;
@@ -700,7 +720,7 @@ public class EventView : MonoBehaviour
                             tempEntry.hasTimer = true;
                             tempEntry.timerSeconds = 30;
                             tempEntry.timerEveryTenInLastMinute = true;
-                            tempEntry.timerLastTen = true;
+                            tempEntry.timerLastFive = true;
                             tempEntry.hasEndHorn = true;
                             tempEntry.endHornLength = 1;
                             if (loops > 1)
@@ -716,16 +736,19 @@ public class EventView : MonoBehaviour
 
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     // Add group separation time if wanted
-                    if (betweenTimeSeconds > 0)
+                    if (betweenGroupTimeSeconds > 0 && !(lastGroup && lastRound) && !(lastGroup && !lastRound))
                     {
                         String betweenString = "";
-                        if (betweenTimeSeconds < 60)
+                        String betweenStringSpoken = "";
+                        if (betweenGroupTimeSeconds < 60)
                         {
-                            betweenString = betweenTimeSeconds.ToString() + " Second";
+                            betweenString = betweenGroupTimeSeconds.ToString() + " Second";
+                            betweenStringSpoken = betweenGroupTimeSeconds.ToString() + " Second";
                         }
                         else
                         {
-                            betweenString = (betweenTimeSeconds / 60).ToString() + " Minute";
+                            betweenString = (betweenGroupTimeSeconds / 60).ToString() + " Minute";
+                            betweenStringSpoken = (betweenGroupTimeSeconds / 60).ToString() + " minnit";
                         }
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
@@ -733,21 +756,56 @@ public class EventView : MonoBehaviour
                         tempEntry.group = group;
                         tempEntry.entryType = "Wait";
                         tempEntry.textDescription = betweenString + " Group Separation Time";
-                        tempEntry.spokenText = betweenString + " Group Separation Time";
+                        tempEntry.spokenText = betweenStringSpoken + " Group Separation Time";
                         tempEntry.spokenPreDelay = 2.0;
                         tempEntry.spokenTextWait = false;
-                        tempEntry.spokenTextOnCountdown = "Until next group";
+                        tempEntry.spokenTextOnCountdown = "Left in group separation";
                         tempEntry.hasTimer = true;
-                        tempEntry.timerSeconds = betweenTimeSeconds;
+                        tempEntry.timerSeconds = betweenGroupTimeSeconds;
                         tempEntry.timerEveryThirty = true;
                         tempEntry.timerLastTen = false;
                         tempEntry.hasEndHorn = false;
-                        tempEntry.estimatedSeconds = betweenTimeSeconds;
+                        tempEntry.estimatedSeconds = betweenGroupTimeSeconds;
                         playList.Add(tempEntry);
                         sequence += 1;
                     }
 
                 }
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Add round separation time if wanted
+                if (betweenRoundTimeSeconds > 0 && ! lastRound )
+                {
+                    String betweenString = "";
+                    String betweenStringSpoken = "";
+                    if (betweenRoundTimeSeconds < 60)
+                    {
+                        betweenString = betweenRoundTimeSeconds.ToString() + " Second";
+                        betweenStringSpoken = betweenRoundTimeSeconds.ToString() + " Second";
+                    }
+                    else
+                    {
+                        betweenString = (betweenRoundTimeSeconds / 60).ToString() + " Minute";
+                        betweenStringSpoken = (betweenRoundTimeSeconds / 60).ToString() + " minnit";
+                    }
+                    tempEntry = new PlayQueueEntry();
+                    tempEntry.sequenceID = sequence;
+                    tempEntry.round_number = round.round_number;
+                    tempEntry.entryType = "Wait";
+                    tempEntry.textDescription = betweenString + " Round Separation Time";
+                    tempEntry.spokenText = betweenStringSpoken + " Round Separation Time";
+                    tempEntry.spokenPreDelay = 2.0;
+                    tempEntry.spokenTextWait = false;
+                    tempEntry.spokenTextOnCountdown = "Until start of next round";
+                    tempEntry.hasTimer = true;
+                    tempEntry.timerSeconds = betweenRoundTimeSeconds;
+                    tempEntry.timerEveryThirty = true;
+                    tempEntry.timerLastTen = false;
+                    tempEntry.hasEndHorn = false;
+                    tempEntry.estimatedSeconds = betweenRoundTimeSeconds;
+                    playList.Add(tempEntry);
+                    sequence += 1;
+                }
+
             }
         }
         if ( e.eventInfo.event_type_code == "f3j" || e.eventInfo.event_type_code == "f3l" || e.eventInfo.event_type_code == "f5j" || e.eventInfo.event_type_code == "td" || e.eventInfo.event_type_code == "gps")
@@ -757,8 +815,15 @@ public class EventView : MonoBehaviour
             {
                 EventTask taskInfo = getTask(round.round_number);
                 int windowTime = taskInfo.event_task_time_choice;
-                foreach( string group in getGroupsInRound(round.round_number))
+                List<string> groups = getGroupsInRound(round.round_number);
+                // Set lastRound variable
+                bool lastRound = round.round_number == rounds.Count ? true : false;
+
+                foreach ( string group in groups)
                 {
+                    // Set lastgroup variable
+                    bool lastGroup = groups.IndexOf(group) == groups.Count - 1 ? true : false;
+
                     // Get pilot list for this group if needed
                     List<String> pilotList = getPilotList( round.round_number, group );
 
@@ -783,7 +848,7 @@ public class EventView : MonoBehaviour
                     tempEntry.sequenceID = sequence;
                     tempEntry.round_number = round.round_number;
                     tempEntry.group = group;
-                    tempEntry.entryType = "Announce";
+                    tempEntry.entryType = "RoundAnnounce";
                     if( IsReflightGroup(round.round_number, group))
                     {
                         tempEntry.textDescription = "Round " + round.round_number.ToString() + " Reflight Group " + group;
@@ -911,14 +976,14 @@ public class EventView : MonoBehaviour
                         tempEntry.group = group;
                         tempEntry.entryType = "Landing";
                         tempEntry.textDescription = "1 Minute Landing Window";
-                        tempEntry.spokenText = "1 Minute Landing Window";
+                        tempEntry.spokenText = "1 minnit Landing Window";
                         tempEntry.spokenPreDelay = 2.0;
                         tempEntry.spokenTextWait = false;
                         tempEntry.spokenTextOnCountdown = "in landing window";
                         tempEntry.hasTimer = true;
                         tempEntry.timerSeconds = 60;
-                        tempEntry.timerEveryTenInLastMinute = true;
-                        tempEntry.timerLastTen = true;
+                        tempEntry.timerEveryFifteen = true;
+                        tempEntry.timerLastFive = true;
                         tempEntry.hasEndHorn = true;
                         tempEntry.endHornLength = 1;
                         tempEntry.estimatedSeconds = 60;
@@ -928,16 +993,20 @@ public class EventView : MonoBehaviour
 
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     // Add group separation time if wanted
-                    if (betweenTimeSeconds > 0)
+                    
+                    if (betweenGroupTimeSeconds > 0 && !( lastGroup && lastRound) && ! ( lastGroup && ! lastRound ) )
                     {
                         String betweenString = "";
-                        if(betweenTimeSeconds < 60)
+                        String betweenStringSpoken = "";
+                        if (betweenGroupTimeSeconds < 60)
                         {
-                            betweenString = betweenTimeSeconds.ToString() + " Second";
+                            betweenString = betweenGroupTimeSeconds.ToString() + " Second";
+                            betweenStringSpoken = betweenGroupTimeSeconds.ToString() + " Second";
                         }
                         else
                         {
-                            betweenString = (betweenTimeSeconds / 60).ToString() + " Minute";
+                            betweenString = (betweenGroupTimeSeconds / 60).ToString() + " Minute";
+                            betweenStringSpoken = (betweenGroupTimeSeconds / 60).ToString() + " minnit";
                         }
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
@@ -945,21 +1014,57 @@ public class EventView : MonoBehaviour
                         tempEntry.group = group;
                         tempEntry.entryType = "Wait";
                         tempEntry.textDescription = betweenString + " Group Separation Time";
-                        tempEntry.spokenText = betweenString + " Group Separation Time";
+                        tempEntry.spokenText = betweenStringSpoken + " Group Separation Time";
                         tempEntry.spokenPreDelay = 2.0;
                         tempEntry.spokenTextWait = false;
-                        tempEntry.spokenTextOnCountdown = "Until next group";
+                        tempEntry.spokenTextOnCountdown = "left in group separation";
                         tempEntry.hasTimer = true;
-                        tempEntry.timerSeconds = betweenTimeSeconds;
-                        tempEntry.timerEveryThirty = true;
+                        tempEntry.timerSeconds = betweenGroupTimeSeconds;
+                        tempEntry.timerEveryFifteen = true;
                         tempEntry.timerLastTen = false;
                         tempEntry.hasEndHorn = false;
-                        tempEntry.estimatedSeconds = betweenTimeSeconds;
+                        tempEntry.estimatedSeconds = betweenGroupTimeSeconds;
                         playList.Add(tempEntry);
                         sequence += 1;
                     }
                 }
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Add round separation time if wanted
+                if (betweenRoundTimeSeconds > 0 && ! lastRound)
+                {
+                    String betweenString = "";
+                    String betweenStringSpoken = "";
+                    if (betweenRoundTimeSeconds < 60)
+                    {
+                        betweenString = betweenRoundTimeSeconds.ToString() + " Second";
+                        betweenStringSpoken = betweenRoundTimeSeconds.ToString() + " Second";
+                    }
+                    else
+                    {
+                        betweenString = (betweenRoundTimeSeconds / 60).ToString() + " Minute";
+                        betweenStringSpoken = (betweenRoundTimeSeconds / 60).ToString() + " minnit";
+                    }
+                    tempEntry = new PlayQueueEntry();
+                    tempEntry.sequenceID = sequence;
+                    tempEntry.round_number = round.round_number;
+                    tempEntry.entryType = "Wait";
+                    tempEntry.textDescription = betweenString + " Round Separation Time";
+                    tempEntry.spokenText = betweenStringSpoken + " Round Separation Time";
+                    tempEntry.spokenPreDelay = 2.0;
+                    tempEntry.spokenTextWait = false;
+                    tempEntry.spokenTextOnCountdown = "Until start of next round";
+                    tempEntry.hasTimer = true;
+                    tempEntry.timerSeconds = betweenRoundTimeSeconds;
+                    tempEntry.timerEveryThirty = true;
+                    tempEntry.timerLastTen = false;
+                    tempEntry.hasEndHorn = false;
+                    tempEntry.estimatedSeconds = betweenRoundTimeSeconds;
+                    playList.Add(tempEntry);
+                    sequence += 1;
+                }
+
             }
+
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Add end of playlist entry
@@ -1308,10 +1413,42 @@ public class EventView : MonoBehaviour
         }
         return minutes;
     }
-    public int getBetweenTime()
+    public int getBetweenGroupTime()
     {
         int seconds = 0;
-        switch( prefs["betweenRounds"])
+        switch( prefs["betweenGroups"])
+        {
+            case "None":
+                seconds = 0;
+                break;
+            case "15 Seconds":
+                seconds = 15;
+                break;
+            case "30 Seconds":
+                seconds = 30;
+                break;
+            case "1 Minute":
+                seconds = 60;
+                break;
+            case "2 Minutes":
+                seconds = 120;
+                break;
+            case "3 Minutes":
+                seconds = 180;
+                break;
+            case "4 Minutes":
+                seconds = 240;
+                break;
+            case "5 Minutes":
+                seconds = 300;
+                break;
+        }
+        return seconds;
+    }
+    public int getBetweenRoundTime()
+    {
+        int seconds = 0;
+        switch (prefs["betweenRounds"])
         {
             case "None":
                 seconds = 0;
@@ -1453,5 +1590,20 @@ class PilotBibComparer : IComparer
         int result;
         result = ((EventPilot)x).pilot_bib.CompareTo(((EventPilot)y).pilot_bib);
         return result;
+    }
+}
+public static class Extensions
+{
+    private static System.Random rand = new System.Random();
+
+    public static void Shuffle<T>(this IList<T> values)
+    {
+        for (int i = values.Count - 1; i > 0; i--)
+        {
+            int k = rand.Next(i + 1);
+            T value = values[k];
+            values[k] = values[i];
+            values[i] = value;
+        }
     }
 }
