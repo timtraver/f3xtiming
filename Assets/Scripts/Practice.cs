@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 using Crosstales.RTVoice;
 using Crosstales.RTVoice.Model;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 
 public class Practice : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Practice : MonoBehaviour
     public Dropdown prefsCulture;
     public Dropdown prefsVoice;
     public Dropdown prefsPrepTime;
+    public Dropdown prefsBetweenGroups;
     public Dropdown prefsBetweenRounds;
     public Toggle prefsUseLanding;
     public Toggle prefsUse45Test;
@@ -223,7 +225,8 @@ public class Practice : MonoBehaviour
         prefs["culture"] = PlayerPrefs.GetString("prefsCulture", "en-US");
         prefs["voice"] = PlayerPrefs.GetString("prefsVoice", "Samantha");
         prefs["prepTime"] = PlayerPrefs.GetString("prefsPrepTime", "5 Minutes");
-        prefs["betweenRounds"] = PlayerPrefs.GetString("prefsBetweenRounds", "1 Minute");
+        prefs["betweenGroups"] = PlayerPrefs.GetString("prefsBetweenGroups", "None");
+        prefs["betweenRounds"] = PlayerPrefs.GetString("prefsBetweenRounds", "None");
         prefs["useLanding"] = PlayerPrefs.GetString("prefsUseLanding", "1");
         prefs["use45Test"] = PlayerPrefs.GetString("prefsUse45Test", "0");
         prefs["useNoFly"] = PlayerPrefs.GetString("prefsUseNoFly", "0");
@@ -237,6 +240,8 @@ public class Practice : MonoBehaviour
         prefsPrepTime.SetValueWithoutNotify( prefsPrepTime.options.FindIndex((i) => { return i.text.Equals(prefs["prepTime"]); }) );
         prefsPrepTime.RefreshShownValue();
 
+        prefsBetweenGroups.SetValueWithoutNotify(prefsBetweenGroups.options.FindIndex((i) => { return i.text.Equals(prefs["betweenGroups"]); }));
+        prefsBetweenGroups.RefreshShownValue();
         prefsBetweenRounds.SetValueWithoutNotify( prefsBetweenRounds.options.FindIndex((i) => { return i.text.Equals(prefs["betweenRounds"]); }));
         prefsBetweenRounds.RefreshShownValue();
 
@@ -265,6 +270,7 @@ public class Practice : MonoBehaviour
             PlayerPrefs.SetString("prefsVoice", prefsVoice.options[prefsVoice.value].text);
         }
         PlayerPrefs.SetString("prefsPrepTime", prefsPrepTime.options[prefsPrepTime.value].text);
+        PlayerPrefs.SetString("prefsBetweenGroups", prefsBetweenGroups.options[prefsBetweenGroups.value].text);
         PlayerPrefs.SetString("prefsBetweenRounds", prefsBetweenRounds.options[prefsBetweenRounds.value].text);
         PlayerPrefs.SetString("prefsUseLanding", prefsUseLanding.isOn ? "1" : "0");
         PlayerPrefs.SetString("prefsUse45Test", prefsUse45Test.isOn ? "1" : "0");
@@ -290,7 +296,8 @@ public class Practice : MonoBehaviour
 
         int sequence = 1;
         int prepTimeMinutes = getPrepTime();
-        int betweenTimeSeconds = getBetweenTime();
+        int betweenGroupTimeSeconds = getBetweenGroupTime();
+        int betweenRoundTimeSeconds = getBetweenRoundTime();
         bool announceTasks = prefs["announceTasks"] == "1" ? true : false;
         bool use45Test = prefs["use45Test"] == "1" ? true : false;
         bool useNoFly = prefs["useNoFly"] == "1" ? true : false;
@@ -308,9 +315,14 @@ public class Practice : MonoBehaviour
         foreach (EventTask taskInfo in roundList)
         {
             int windowTime = taskInfo.event_task_time_choice;
+            // Set lastRound variable
+            bool lastRound = taskInfo.round_number == roundList.Count ? true : false;
 
-            for(int group = 1; group <= groups; group++)
+            for (int group = 1; group <= groups; group++)
             {
+                // Set lastRGroup variable
+                bool lastGroup = group == groups ? true : false;
+
                 if (taskInfo.flight_type_code.StartsWith("f3k"))
                 {
                     // Build the f3k audio play list
@@ -587,16 +599,16 @@ public class Practice : MonoBehaviour
 
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     // Add group separation time if wanted
-                    if (betweenTimeSeconds > 0)
+                    if (betweenGroupTimeSeconds > 0 && !(lastGroup && lastRound) && !(lastGroup && !lastRound))
                     {
                         String betweenString = "";
-                        if (betweenTimeSeconds < 60)
+                        if (betweenGroupTimeSeconds < 60)
                         {
-                            betweenString = betweenTimeSeconds.ToString() + " Second";
+                            betweenString = betweenGroupTimeSeconds.ToString() + " Second";
                         }
                         else
                         {
-                            betweenString = (betweenTimeSeconds / 60).ToString() + " Minute";
+                            betweenString = (betweenGroupTimeSeconds / 60).ToString() + " Minute";
                         }
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
@@ -609,11 +621,11 @@ public class Practice : MonoBehaviour
                         tempEntry.spokenTextWait = false;
                         tempEntry.spokenTextOnCountdown = "Until next group";
                         tempEntry.hasTimer = true;
-                        tempEntry.timerSeconds = betweenTimeSeconds;
+                        tempEntry.timerSeconds = betweenGroupTimeSeconds;
                         tempEntry.timerEveryThirty = true;
                         tempEntry.timerLastTen = false;
                         tempEntry.hasEndHorn = false;
-                        tempEntry.estimatedSeconds = betweenTimeSeconds;
+                        tempEntry.estimatedSeconds = betweenGroupTimeSeconds;
                         playList.Add(tempEntry);
                         sequence += 1;
                     }
@@ -745,16 +757,16 @@ public class Practice : MonoBehaviour
 
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     // Add group separation time if wanted
-                    if (betweenTimeSeconds > 0)
+                    if (betweenGroupTimeSeconds > 0 && !(lastGroup && lastRound) && !(lastGroup && !lastRound))
                     {
                         String betweenString = "";
-                        if (betweenTimeSeconds < 60)
+                        if (betweenGroupTimeSeconds < 60)
                         {
-                            betweenString = betweenTimeSeconds.ToString() + " Second";
+                            betweenString = betweenGroupTimeSeconds.ToString() + " Second";
                         }
                         else
                         {
-                            betweenString = (betweenTimeSeconds / 60).ToString() + " Minute";
+                            betweenString = (betweenGroupTimeSeconds / 60).ToString() + " Minute";
                         }
                         tempEntry = new PlayQueueEntry();
                         tempEntry.sequenceID = sequence;
@@ -767,16 +779,48 @@ public class Practice : MonoBehaviour
                         tempEntry.spokenTextWait = false;
                         tempEntry.spokenTextOnCountdown = "Until next group";
                         tempEntry.hasTimer = true;
-                        tempEntry.timerSeconds = betweenTimeSeconds;
+                        tempEntry.timerSeconds = betweenGroupTimeSeconds;
                         tempEntry.timerEveryThirty = true;
                         tempEntry.timerLastTen = false;
                         tempEntry.hasEndHorn = false;
-                        tempEntry.estimatedSeconds = betweenTimeSeconds;
+                        tempEntry.estimatedSeconds = betweenGroupTimeSeconds;
                         playList.Add(tempEntry);
                         sequence += 1;
                     }
                 }
             }
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Add round separation time if wanted
+            if (betweenRoundTimeSeconds > 0 && ! lastRound)
+            {
+                String betweenString = "";
+                if (betweenRoundTimeSeconds < 60)
+                {
+                    betweenString = betweenRoundTimeSeconds.ToString() + " Second";
+                }
+                else
+                {
+                    betweenString = (betweenRoundTimeSeconds / 60).ToString() + " Minute";
+                }
+                tempEntry = new PlayQueueEntry();
+                tempEntry.sequenceID = sequence;
+                tempEntry.round_number = taskInfo.round_number;
+                tempEntry.entryType = "Wait";
+                tempEntry.textDescription = betweenString + " Round Separation Time";
+                tempEntry.spokenText = betweenString + " Round Separation Time";
+                tempEntry.spokenPreDelay = 2.0;
+                tempEntry.spokenTextWait = false;
+                tempEntry.spokenTextOnCountdown = "Until start of next round";
+                tempEntry.hasTimer = true;
+                tempEntry.timerSeconds = betweenRoundTimeSeconds;
+                tempEntry.timerEveryThirty = true;
+                tempEntry.timerLastTen = false;
+                tempEntry.hasEndHorn = false;
+                tempEntry.estimatedSeconds = betweenRoundTimeSeconds;
+                playList.Add(tempEntry);
+                sequence += 1;
+            }
+
         }
         ShowPlayList();
         queueControl.clockCurrentSeconds = 0;
@@ -830,6 +874,11 @@ public class Practice : MonoBehaviour
         if (overrideToggle.isOn && windowMinutes.text != null && windowMinutes.text != "")
         {
             task.event_task_time_choice = Convert.ToInt32(windowMinutes.text) * 60;
+            if (task.flight_type_code == "f5j_low30" || task.flight_type_code == "f5j_low60")
+            {
+                task.flight_type_name = "F5J Low Launch " + windowMinutes.text + " Minutes";
+                task.flight_type_description = "F5j Electric duration low launch competition." + windowMinutes.text + " minute working window.";
+            }
         }
 
         roundList.Add(task);
@@ -943,10 +992,42 @@ public class Practice : MonoBehaviour
         }
         return minutes;
     }
-    public int getBetweenTime()
+    public int getBetweenGroupTime()
     {
         int seconds = 0;
-        switch( prefs["betweenRounds"])
+        switch( prefs["betweenGroups"])
+        {
+            case "None":
+                seconds = 0;
+                break;
+            case "15 Seconds":
+                seconds = 15;
+                break;
+            case "30 Seconds":
+                seconds = 30;
+                break;
+            case "1 Minute":
+                seconds = 60;
+                break;
+            case "2 Minutes":
+                seconds = 120;
+                break;
+            case "3 Minutes":
+                seconds = 180;
+                break;
+            case "4 Minutes":
+                seconds = 240;
+                break;
+            case "5 Minutes":
+                seconds = 300;
+                break;
+        }
+        return seconds;
+    }
+    public int getBetweenRoundTime()
+    {
+        int seconds = 0;
+        switch (prefs["betweenRounds"])
         {
             case "None":
                 seconds = 0;
