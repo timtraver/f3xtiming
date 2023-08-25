@@ -242,7 +242,7 @@ public class PracticeAnnounceMeetings : MonoBehaviour
     public void MeetingFormats()
     {
         // Method to check the meeting and start time formats and update them to make entry easier
-        if (pilotMeetingTime.text.Length == 3 && Convert.ToInt32(pilotMeetingTime.text.Substring(0, 1)) < 10 && pilotMeetingTime.text.Substring(0, 1) != "0" && pilotMeetingTime.text.IndexOf(':') == -1)
+        if (pilotMeetingTime.text.Length == 3 && Convert.ToInt32(pilotMeetingTime.text.Substring(0, 1)) < 10 && Convert.ToInt32(pilotMeetingTime.text.Substring(0, 1)) > 2 && pilotMeetingTime.text.Substring(0, 1) != "0" && pilotMeetingTime.text.IndexOf(':') == -1)
         {
             pilotMeetingTime.text = "0" + pilotMeetingTime.text.Substring(0, 1) + ":" + pilotMeetingTime.text.Substring(1, 2);
         }
@@ -254,7 +254,7 @@ public class PracticeAnnounceMeetings : MonoBehaviour
         {
             pilotMeetingTime.text = pilotMeetingTime.text.Substring(0, 2) + ":" + pilotMeetingTime.text.Substring(2, 2);
         }
-        if (startContestTime.text.Length == 3 && Convert.ToInt32(startContestTime.text.Substring(0, 1)) < 10 && startContestTime.text.Substring(0, 1) != "0" && startContestTime.text.IndexOf(':') == -1)
+        if (startContestTime.text.Length == 3 && Convert.ToInt32(startContestTime.text.Substring(0, 1)) < 10 && Convert.ToInt32(startContestTime.text.Substring(0, 1)) > 2 && startContestTime.text.Substring(0, 1) != "0" && startContestTime.text.IndexOf(':') == -1)
         {
             startContestTime.text = "0" + startContestTime.text.Substring(0, 1) + ":" + startContestTime.text.Substring(1, 2);
         }
