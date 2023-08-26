@@ -267,7 +267,7 @@ public class QueueControl : MonoBehaviour
     }
     public void UpdateProgressBar()
     {
-        // method to updatethe progress bar to the correct value
+        // method to update the progress bar to the correct value
         float sliderPercent = 0;
         if( clockCurrentSeconds > 0)
         {
@@ -303,21 +303,24 @@ public class QueueControl : MonoBehaviour
             string speakText = "";
             int maxRound = playList[currentQueueEntry].round_number - 2;
             if (maxRound < 0) { maxRound = 0; }
-            UnityEngine.Debug.Log("maxRound = " + maxRound.ToString());
             // If it is the end of a round, and the reminder to self score is activated, let us do it here
-            if (playList[lastQueueEntry].round_number != playList[currentQueueEntry].round_number && e.prefs["announceScoreReminders"] == "1" && maxRound != 0)
+            if (lastQueueEntry != -1 && e.internetConnected != 0)
             {
-                // let us look at rounds in the draw more than one round old where pilots have not entered scores
-                List<string> nagList = e.getPilotReminderList(maxRound);
-
-                string insultString = reminderStrings[insult];
-                insult++;
-                if (insult >= reminderStrings.Count) { reminderStrings.Shuffle(); insult = 0; }
-                speakText = insultString;
-                //speakText = "Will the following pilots please enter scores for previous rounds.,, ";
-                speakText += String.Join(", ", nagList );
-                speakText += ". Thank you. Now for the next round.,, ";
-
+                if (playList[lastQueueEntry].round_number != playList[currentQueueEntry].round_number && e.prefs["announceScoreReminders"] == "1" && maxRound != 0)
+                {
+                    // let us look at rounds in the draw more than one round old where pilots have not entered scores
+                    List<string> nagList = e.getPilotReminderList(maxRound);
+                    if (nagList.Count > 0)
+                    {
+                        string insultString = reminderStrings[insult];
+                        insult++;
+                        if (insult >= reminderStrings.Count) { reminderStrings.Shuffle(); insult = 0; }
+                        speakText = insultString;
+                        //speakText = "Will the following pilots please enter scores for previous rounds.,, ";
+                        speakText += String.Join(", ", nagList);
+                        speakText += ". Thank you. Now for the next round.,, ";
+                    }
+                }
             }
             speakText += playList[entry].spokenText;
             StartCoroutine( SpeakMainQueueText( speakText, playList[entry].spokenPreDelay, playList[entry].spokenPostDelay ) );
@@ -715,8 +718,7 @@ public class QueueControl : MonoBehaviour
         {
             loadingVoicePopup.Hide();
             Speaker.Instance.OnSpeakAudioGenerationComplete -= onAudioGenerationComplete;
-            e.preloadButton.image.color = Color.green;
-            e.preloadButtonText.text = "Voice Phrases Cached";
+            e.PreLoadButtonStatus(true);
             e.audioSource.volume = 1.0f;
         }
         else
@@ -895,7 +897,7 @@ public class QueueControl : MonoBehaviour
         }
         //Set the play icon to active in the current entry by turning off the old one and then activating the new one
         if (playList.Count > 0) {
-            if (currentQueueEntry != lastQueueEntry && lastQueueEntry != -1 )
+            if (currentQueueEntry != lastQueueEntry && lastQueueEntry != -1)
             {
                 // Update the play symbols on the entries
                 // Lets update the queueEntry image if we are in that queueEntry
@@ -909,6 +911,12 @@ public class QueueControl : MonoBehaviour
                     Image playImageOld = playListObjectOld.GetComponent<Image>();
                     playImageOld.enabled = false;
                 }
+            }
+            else
+            {
+                Transform playListObject = e.queueListObject.GetChild(currentQueueEntry).GetChild(2);
+                Image playImage = playListObject.GetComponent<Image>();
+                playImage.enabled = true;
             }
         }
 
