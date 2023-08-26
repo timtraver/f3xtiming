@@ -325,9 +325,7 @@ public class EventView : MonoBehaviour
         // routine to run when someone changesthe voice selection
         SavePrefs();
         queueControl.voice = Speaker.Instance.VoiceForName(prefs["voice"]);
-        //queueControl.VoicePreLoad();
-        preloadButton.image.color = new Color(0.9622642f, 0.3767355f, 0.3767355f, 1f);
-        preloadButtonText.text = "Preload Voice Cache (Suggested)";
+        PreLoadButtonStatus(false);
         return;
     }
     public void CalcToDropDown()
@@ -1119,8 +1117,7 @@ public class EventView : MonoBehaviour
         queueControl.currentQueueEntry = 0;
         queueControl.UpdateClockText();
         queueControl.CalculateQueueTimeRemaining();
-        preloadButton.image.color = new Color(0.9622642f, 0.3767355f, 0.3767355f, 1f);
-        preloadButtonText.text = "Preload Voice Cache (Suggested)";
+        PreLoadButtonStatus(false);
         return;
     }
     // routine to show the playlist entries
@@ -1153,6 +1150,21 @@ public class EventView : MonoBehaviour
         return;
     }
 
+    // Routine to set the preload button to green or red
+    public void PreLoadButtonStatus(bool status)
+    {
+        if (status)
+        {
+            preloadButton.image.color = Color.green;
+            preloadButtonText.text = "Voice Phrases Cached";
+        }
+        else
+        {
+            preloadButton.image.color = new Color(0.9622642f, 0.3767355f, 0.3767355f, 1f);
+            preloadButtonText.text = "Preload Voice Cache (Suggested)";
+        }
+        return;
+    }
     // Let us create a list of rounds from the event data
     public void getRounds()
     {
