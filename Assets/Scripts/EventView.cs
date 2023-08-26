@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Crosstales.RTVoice;
 using Crosstales.RTVoice.Model;
 using UnityEditor.Localization.Plugins.XLIFF.V12;
+using PetrushevskiApps.Utilities; // Internet connectivity utility
 
 public class EventView : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class EventView : MonoBehaviour
     public Toggle prefsUseOneMinuteNoFly;
     public Toggle prefsAnnouncePilotsNextRound;
     public Toggle prefsAnnounceTasks;
+    public Toggle prefsAnnounceScoreReminders;
     public List<PlayQueueEntry> playList = new List<PlayQueueEntry>();
     public Transform queueListObject;
     public QueueListDisplayRound queueListDisplayRoundPrefab;
@@ -50,6 +52,8 @@ public class EventView : MonoBehaviour
     public Dropdown calcToDropDown;
     public Button preloadButton;
     public Text preloadButtonText;
+    public Button internetButton;
+    public int internetConnected;
     private int insult;
 
     // Sound variables
@@ -79,6 +83,12 @@ public class EventView : MonoBehaviour
     public AudioClip moo2;
     public AudioClip moo3;
 
+    private void Awake()
+    {
+        // Create connectivity manager listener
+        ConnectivityManager.Instance.AddConnectivityListener(OnConnectivityChange);
+        connectionCheck();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -159,9 +169,6 @@ public class EventView : MonoBehaviour
         // Now lets add the pilot lines
         foreach (EventRound round in rounds)
         {
-            //DrawRoundDisplay displayRound = (DrawRoundDisplay)Instantiate(this.drawRoundDisplayPrefab);
-            //displayRound.transform.SetParent(drawListObject, false);
-            //displayRound.Prime(round);
             string oldgroup = "old";
             foreach(EventRoundFlight flight in round.flights)
             {
@@ -170,20 +177,15 @@ public class EventView : MonoBehaviour
                     // This is the start of a new group, so put a round and group header in place
                     DrawRoundDisplay displayRound = (DrawRoundDisplay)Instantiate(this.drawRoundDisplayPrefab);
                     displayRound.transform.SetParent(drawListObject, false);
-                    displayRound.Prime(round, flight.group);
+                    displayRound.Prime(round, flight);
                     numberDrawRoundDisplayEntries++;
-
-                    //DrawDisplaySpacer displaySpacer = (DrawDisplaySpacer)Instantiate(this.drawRoundDisplaySpacerPrefab);
-                    //displaySpacer.transform.SetParent(drawListObject, false);
                 }
                 DrawDisplay displayFlight = (DrawDisplay)Instantiate(this.drawDisplayPrefab);
                 displayFlight.transform.SetParent(drawListObject, false);
-                displayFlight.Prime(flight);
+                displayFlight.Prime(round, flight);
                 numberDrawRoundDisplayEntries++;
                 oldgroup = flight.group;
             }
-            //DrawDisplaySpacer displaySpacer2 = (DrawDisplaySpacer)Instantiate(this.drawRoundDisplaySpacerPrefab);
-            //displaySpacer2.transform.SetParent(drawListObject, false);
         }
         return;
     }
@@ -218,22 +220,25 @@ public class EventView : MonoBehaviour
     public void MikeSmithRuleAnnounce()
     {
         List<String> msRuleStrings = new List<String>();
-        msRuleStrings.Add("Mike has a history of something going wrong at the last minnit.");
-        msRuleStrings.Add("Rumor has it that Mike spotted the lead singer of Spandau Ballet and needed to get an autograph.");
-        msRuleStrings.Add("Some of the parts of his plane must have fallen off.");
+        msRuleStrings.Add("This pilot has a history of something going wrong at the last minnit.");
+        msRuleStrings.Add("Rumor has it that this pilot spotted the lead singer of Spandau Ballet and needed to get an autograph.");
+        msRuleStrings.Add("Some of the parts of this pilots plane must have fallen off.");
         msRuleStrings.Add("Does anyone have any C A?");
         msRuleStrings.Add("The guy that he paid 20 bucks to build his plane swore it went on that way.");
         msRuleStrings.Add("Once the body goes, the mind follows.");
+        msRuleStrings.Add("Somebody got his fly stuck.");
         msRuleStrings.Add("He must have lost the batteries in his hearing aid.");
-        msRuleStrings.Add("He's finishing up the last sleave of girl scout cookies.");
-        msRuleStrings.Add("Meditation takes a while.");
+        msRuleStrings.Add("He's finishing up the last box of girl scout cookies.");
         msRuleStrings.Add("You just can't fix stupid.");
-        msRuleStrings.Add("I think he just got vaccinated in the bushes.");
         msRuleStrings.Add("Drinking 3 red bulls has made him a little shakey.");
-        msRuleStrings.Add("He must have had the finish his Justin Beeber song to get in the groove.");
-        msRuleStrings.Add("Twitter was calling him to stop harassing Madonna.");
         msRuleStrings.Add("Remember kiddos, always bring a back up.");
         msRuleStrings.Add("The peanut butter sandwich is sticking to the roof of his mouth.");
+        msRuleStrings.Add("He looks smarter in pictures.");
+        msRuleStrings.Add("His family tree didn't have enough branches.");
+        msRuleStrings.Add("Evolution is not always a good thing.");
+        msRuleStrings.Add("There really is one born every minnit.");
+        msRuleStrings.Add("The gene pool needs more chlorine.");
+        msRuleStrings.Add("Even Bob Ross would call this pilot a mistake.");
         msRuleStrings.Shuffle();
 
         if (queueControl.clockTimerRunning)
@@ -249,11 +254,34 @@ public class EventView : MonoBehaviour
         return;
     }
 
+    // Internet connectivity routine
+    public void OnConnectivityChange(bool isConnected, string errorMsg)
+    {
+        connectionCheck();
+    }
+    public void connectionCheck()
+    {
+        // Method to do whatever is needed when connection is up or down
+        if (ConnectivityManager.Instance.IsConnected)
+        {
+            // Make search button active and turn it green
+            Debug.Log("Internet connection is up!");
+            internetConnected = 1;
+            internetButton.image.color = new Color(0.1595837f, 0.6981132f, 0.06256673f, 1f);
+        }
+        else
+        {
+            // Make search button inactive and turn it red
+            Debug.Log("Internet connection is down!");
+            internetConnected = 0;
+            internetButton.image.color = new Color(0.7215686f, 0.1820968f, 0.1764706f, 1f);
+        }
+        return;
+    }
+
     // Function to initialize all of the preference values and lists
     public void InitializePrefs()
     {
-        //this.PrefsCultureDropDown();
-        //this.PrefsVoiceDropDown();
         this.LoadPrefs();
         return;
     }
@@ -332,6 +360,7 @@ public class EventView : MonoBehaviour
         prefs["useNoFly"] = PlayerPrefs.GetString("prefsUseNoFly", "0");
         prefs["announcePilotsNextRound"] = PlayerPrefs.GetString("prefsAnnouncePilotsNextRound", "0");
         prefs["announceTasks"] = PlayerPrefs.GetString("prefsAnnounceTasks", "0");
+        prefs["announceScoreReminders"] = PlayerPrefs.GetString("prefsAnnounceScoreReminders", "0");
 
         // Now set the objects to their preferences values
         prefsHorn.SetValueWithoutNotify( prefsHorn.options.FindIndex((i) => { return i.text.Equals(prefs["horn"]); }) );
@@ -352,6 +381,7 @@ public class EventView : MonoBehaviour
         prefsUseOneMinuteNoFly.SetIsOnWithoutNotify(prefs["useNoFly"] == "1" ? true : false);
         prefsAnnouncePilotsNextRound.SetIsOnWithoutNotify(prefs["announcePilotsNextRound"] == "1" ? true : false);
         prefsAnnounceTasks.SetIsOnWithoutNotify(prefs["announceTasks"] == "1" ? true : false);
+        prefsAnnounceScoreReminders.SetIsOnWithoutNotify(prefs["announceScoreReminders"] == "1" ? true : false);
         if (queueControl.queueTimerRunning)
         {
             queueControl.voice = Speaker.Instance.VoiceForName(prefs["voice"]);
@@ -373,6 +403,7 @@ public class EventView : MonoBehaviour
         PlayerPrefs.SetString("prefsUseNoFly", prefsUseOneMinuteNoFly.isOn ? "1" : "0");
         PlayerPrefs.SetString("prefsAnnouncePilotsNextRound", prefsAnnouncePilotsNextRound.isOn ? "1" : "0");
         PlayerPrefs.SetString("prefsAnnounceTasks", prefsAnnounceTasks.isOn ? "1" : "0");
+        PlayerPrefs.SetString("prefsAnnounceScoreReminders", prefsAnnounceScoreReminders.isOn ? "1" : "0");
         PlayerPrefs.Save();
         LoadPrefs();
         return;
@@ -449,7 +480,7 @@ public class EventView : MonoBehaviour
                     if (IsReflightGroup(round.round_number, group))
                     {
                         tempEntry.textDescription = "Round " + round.round_number.ToString() + " Reflight Group " + group;
-                        tempEntry.spokenText = "Round " + round.round_number.ToString() + ", Reeflight group " + group;
+                        tempEntry.spokenText = "Round " + round.round_number.ToString() + ", Reflight group " + group;
                     }
                     else
                     {
@@ -852,7 +883,7 @@ public class EventView : MonoBehaviour
                     if( IsReflightGroup(round.round_number, group))
                     {
                         tempEntry.textDescription = "Round " + round.round_number.ToString() + " Reflight Group " + group;
-                        tempEntry.spokenText = "Round " + round.round_number.ToString() + ", Reeflight group " + group;
+                        tempEntry.spokenText = "Round " + round.round_number.ToString() + ", Reflight group " + group;
                     }
                     else
                     {
@@ -1072,7 +1103,14 @@ public class EventView : MonoBehaviour
         tempEntry.sequenceID = sequence;
         tempEntry.entryType = "Announce";
         tempEntry.textDescription = "End of contest.";
-        tempEntry.spokenText = "End of contest. Thank you for flying with F 3 x vault. Have a nice day.";
+        if (prefs["announceScoreReminders"] == "1")
+        {
+            tempEntry.spokenText = "End of contest.,, Please enter your final scores in the self scoring system.,, Thank you for flying with F 3 x vault. Have a nice day.";
+        }
+        else
+        {
+            tempEntry.spokenText = "End of contest. Thank you for flying with F 3 x vault. Have a nice day.";
+        }
         tempEntry.estimatedSeconds = 5;
         playList.Add(tempEntry);
 
@@ -1143,6 +1181,7 @@ public class EventView : MonoBehaviour
                                 tempflight.lane = flight.flight_lane;
                                 tempflight.pilot_first_name = pilot.pilot_first_name;
                                 tempflight.pilot_last_name = pilot.pilot_last_name;
+                                tempflight.entered = flight.flight_entered;
                                 // Add a new value to array of tempRound flights
                                 System.Array.Resize(ref tempRound.flights, tempRound.flights.Length + 1);
                                 tempRound.flights[tempRound.flights.Length - 1] = tempflight;
@@ -1156,6 +1195,7 @@ public class EventView : MonoBehaviour
                                 tempflight.lane = reflight.flight_lane;
                                 tempflight.pilot_first_name = pilot.pilot_first_name;
                                 tempflight.pilot_last_name = pilot.pilot_last_name;
+                                tempflight.entered = reflight.flight_entered;
                                 // Add a new value to array of tempRound flights
                                 System.Array.Resize(ref tempRound.flights, tempRound.flights.Length + 1);
                                 tempRound.flights[tempRound.flights.Length - 1] = tempflight;
@@ -1488,6 +1528,35 @@ public class EventView : MonoBehaviour
                 {
                     if (f.group == group)
                     {
+                        // Lets look to see if they have a phoneme of their name
+                        if (PlayerPrefs.HasKey(f.pilot_first_name + " " + f.pilot_last_name))
+                        {
+                            pilots.Add(PlayerPrefs.GetString(f.pilot_first_name + " " + f.pilot_last_name));
+                        }
+                        else
+                        {
+                            pilots.Add(f.pilot_first_name + " " + f.pilot_last_name);
+                        }
+                    }
+                }
+            }
+        }
+        pilots.Sort();
+        return pilots;
+    }
+    public List<String> getPilotReminderList(int round)
+    {
+        List<String> pilots = new List<String>();
+
+        foreach (EventRound r in rounds)
+        {
+            if (r.round_number <= round)
+            {
+                foreach (EventRoundFlight f in r.flights)
+                {
+                    if (f.entered == 0 && ! ( pilots.Contains(f.pilot_first_name + " " + f.pilot_last_name ) || pilots.Contains(PlayerPrefs.GetString(f.pilot_first_name + " " + f.pilot_last_name))) )
+                    {
+                        // Add the pilot to the list
                         // Lets look to see if they have a phoneme of their name
                         if (PlayerPrefs.HasKey(f.pilot_first_name + " " + f.pilot_last_name))
                         {

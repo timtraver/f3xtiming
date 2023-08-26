@@ -153,6 +153,7 @@ public class EventRoundFlight
     public double score;
     public int penalty;
     public int dropped;
+    public int entered;
     public int score_status;
     public EventPilotFlightSub[] subs;
 }
@@ -186,6 +187,7 @@ public class EventPilotFlight
     public double flight_score;
     public int flight_penalty;
     public int flight_dropped;
+    public int flight_entered;
     public int score_status;
     public EventPilotFlightSub[] flight_subs;
 

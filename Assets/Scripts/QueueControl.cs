@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Crosstales.RTVoice;
 using System.Security.Cryptography;
+using Crosstales.RTVoice.UI;
 
 public class QueueControl : MonoBehaviour
 {
@@ -49,7 +50,8 @@ public class QueueControl : MonoBehaviour
     public List<String> preloadPhrases = new List<string>();
     public GlobalCache globalCache;
     public int phrasesToLoad;
-
+    public List<String> reminderStrings = new List<string>();
+    private int insult;
     private void Start()
     {
         // Use this to initialize any variables
@@ -66,6 +68,8 @@ public class QueueControl : MonoBehaviour
         playList = e.playList;
         playListScroll.verticalNormalizedPosition = 1.0f;
         drawListScroll.verticalNormalizedPosition = 1.0f;
+        insult = 0;
+        SetReminderList();
         // Now load the playlist state if needed
         LoadQueueState();
         return;
@@ -253,6 +257,11 @@ public class QueueControl : MonoBehaviour
                 drawScrollValue = 1.0f - ((float)drawentries - (float)lastgroupsize) / (float)((e.numberDrawRoundDisplayEntries - 19));
             }
             drawListScroll.verticalNormalizedPosition = drawScrollValue;
+            // To reload the event draw, we need to load the event again from the f3xvault site, and this will trigger the reload of the draw pane
+            if ( e.internetConnected == 1 )
+            {
+                e.LoadEvent();
+            }
         }
         return;
     }
@@ -287,12 +296,34 @@ public class QueueControl : MonoBehaviour
             clockText.text = e.convertSecondsToClockString(Convert.ToInt32(Math.Ceiling(clockCurrentSeconds)));
         }
 
+
         // If the entry has some speech, then call the speech synthesizer
         if ( playList[entry].spokenText != "" ) {
-            StartCoroutine( SpeakMainQueueText( playList[entry].spokenText, playList[entry].spokenPreDelay, playList[entry].spokenPostDelay ) );
+
+            string speakText = "";
+            int maxRound = playList[currentQueueEntry].round_number - 2;
+            if (maxRound < 0) { maxRound = 0; }
+            UnityEngine.Debug.Log("maxRound = " + maxRound.ToString());
+            // If it is the end of a round, and the reminder to self score is activated, let us do it here
+            if (playList[lastQueueEntry].round_number != playList[currentQueueEntry].round_number && e.prefs["announceScoreReminders"] == "1" && maxRound != 0)
+            {
+                // let us look at rounds in the draw more than one round old where pilots have not entered scores
+                List<string> nagList = e.getPilotReminderList(maxRound);
+
+                string insultString = reminderStrings[insult];
+                insult++;
+                if (insult >= reminderStrings.Count) { reminderStrings.Shuffle(); insult = 0; }
+                speakText = insultString;
+                //speakText = "Will the following pilots please enter scores for previous rounds.,, ";
+                speakText += String.Join(", ", nagList );
+                speakText += ". Thank you. Now for the next round.,, ";
+
+            }
+            speakText += playList[entry].spokenText;
+            StartCoroutine( SpeakMainQueueText( speakText, playList[entry].spokenPreDelay, playList[entry].spokenPostDelay ) );
         }
         SaveQueueState();
-        // If it doesn't have a timer, then deduct the estimated seconds from teh queue time remaining
+        // If it doesn't have a timer, then deduct the estimated seconds from the queue time remaining
         if( playList[entry].hasTimer == false)
         {
             queueTimeRemaining -= playList[entry].estimatedSeconds;
@@ -788,6 +819,15 @@ public class QueueControl : MonoBehaviour
         preloadPhrases.Add("3");
         preloadPhrases.Add("2");
         preloadPhrases.Add("1");
+        return;
+    }
+    private void SetReminderList()
+    {
+        reminderStrings.Add("Come on you wiley coyotes!, enter your scores. This means you.,, ");
+        reminderStrings.Add("Hey! Dudes flying Toy airplanes.,,, Please Enter your scores. This means you.,, ");
+        reminderStrings.Add("Don't make us sick you know who on you to enter your scores. This means you.,, ");
+        reminderStrings.Add("Yo! You cool pilots don't want to get in trouble do you?,, enter your scores. This means you.,, ");
+        reminderStrings.Add("Don't make us come over there, to get you to enter your scores. This means you.,, ");
         return;
     }
     // Routines to calculate the time remaining in event
