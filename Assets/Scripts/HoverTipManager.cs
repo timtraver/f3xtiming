@@ -36,7 +36,7 @@ public class HoverTipManager : MonoBehaviour
     private void ShowTip(string tip, Vector2 mousePos, Location tipLocation)
     {
         tipText.text = tip;
-        tipWindow.sizeDelta = new Vector2(tipText.preferredWidth > 200 ? 200 : tipText.preferredWidth, tipText.preferredHeight);
+        tipWindow.sizeDelta = new Vector2(tipText.preferredWidth > 300 ? 300 : tipText.preferredWidth, tipText.preferredHeight);
         tipWindow.gameObject.SetActive(true);
         tipWindow.gameObject.transform.SetAsLastSibling();
 
