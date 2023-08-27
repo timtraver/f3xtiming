@@ -199,7 +199,7 @@ public class AnnounceMeetings : MonoBehaviour
     {
         string speakText = "";
         DateTime currentDate = DateTime.Now;
-        if (pilotMeetingTime.text != "" && pilotMeetingTime.text.Length == 5)
+        if (pilotMeetingTime.text != "" && pilotMeetingTime.text.Length >= 4)
         {
             DateTime meetingDate = DateTime.Parse(currentDate.ToString("yyyy-MM-dd") + " " + pilotMeetingTime.text);
             int diffSeconds = (int)((meetingDate - currentDate).TotalSeconds);
@@ -221,7 +221,7 @@ public class AnnounceMeetings : MonoBehaviour
     {
         string speakText = "";
         DateTime currentDate = DateTime.Now;
-        if (startContestTime.text != "" && startContestTime.text.Length == 5)
+        if (startContestTime.text != "" && startContestTime.text.Length >= 4)
         {
             DateTime startDate = DateTime.Parse(currentDate.ToString("yyyy-MM-dd") + " " + startContestTime.text);
             int diffSeconds = (int)((startDate - currentDate).TotalSeconds);
