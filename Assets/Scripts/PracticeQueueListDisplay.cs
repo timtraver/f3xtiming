@@ -10,7 +10,7 @@ public class PracticeQueueListDisplay : MonoBehaviour
     public Text queueDescription;
     public PlayQueueEntry entry;
     public PracticeQueueControl queueControl;
-    public float doubleClickTime = .2f, lastClickTime;
+    public float doubleClickTime = .4f, lastClickTime;
 
     // Start is called before the first frame update
     void Start()
