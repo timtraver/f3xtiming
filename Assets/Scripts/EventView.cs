@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 using Crosstales.RTVoice;
 using Crosstales.RTVoice.Model;
-using UnityEditor.Localization.Plugins.XLIFF.V12;
 using PetrushevskiApps.Utilities; // Internet connectivity utility
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class EventView : MonoBehaviour
 {
@@ -54,6 +54,7 @@ public class EventView : MonoBehaviour
     public Text preloadButtonText;
     public Button internetButton;
     public int internetConnected;
+    public Button callOutReminderButton;
     private int insult;
 
     // Sound variables
@@ -253,6 +254,31 @@ public class EventView : MonoBehaviour
         if (insult >= msRuleStrings.Count) { msRuleStrings.Shuffle(); insult = 0; }
         return;
     }
+    public void CallOutPilotReminders()
+    {
+        // Routine to call out any of the reminders for the pilot self scoring right this moment
+        string speakText = "";
+        int maxRound = playList[queueControl.currentQueueEntry].round_number - 1;
+        if (maxRound < 0) { maxRound = 0; }
+        // If it is the end of a round, and the reminder to self score is activated, let us do it here
+        if (queueControl.lastQueueEntry != -1 && internetConnected != 0)
+        {
+            // let us look at rounds in the draw more than one round old where pilots have not entered scores
+            List<string> nagList = getPilotReminderList(maxRound);
+            if (nagList.Count > 0)
+            {
+                string insultString = queueControl.reminderStrings[insult];
+                insult++;
+                if (insult >= queueControl.reminderStrings.Count) { queueControl.reminderStrings.Shuffle(); insult = 0; }
+                speakText = insultString;
+                speakText += String.Join(", ", nagList);
+                speakText += ". Thank you.";
+                queueControl.noSpeakEndEvent = true;
+                Speaker.Instance.Speak(speakText, audioSource, Speaker.Instance.VoiceForName(prefs["voice"]), true);
+            }
+        }
+        return;
+    }
 
     // Internet connectivity routine
     public void OnConnectivityChange(bool isConnected, string errorMsg)
@@ -268,6 +294,7 @@ public class EventView : MonoBehaviour
             Debug.Log("Internet connection is up!");
             internetConnected = 1;
             internetButton.image.color = new Color(0.1595837f, 0.6981132f, 0.06256673f, 1f);
+            callOutReminderButton.image.color = new Color(0.1595837f, 0.6981132f, 0.06256673f, 1f);
         }
         else
         {
@@ -275,6 +302,7 @@ public class EventView : MonoBehaviour
             Debug.Log("Internet connection is down!");
             internetConnected = 0;
             internetButton.image.color = new Color(0.7215686f, 0.1820968f, 0.1764706f, 1f);
+            callOutReminderButton.image.color = new Color(0.7215686f, 0.1820968f, 0.1764706f, 1f);
         }
         return;
     }
