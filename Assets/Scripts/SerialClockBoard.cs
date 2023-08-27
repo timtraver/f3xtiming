@@ -239,6 +239,9 @@ public class SerialClockBoard : MonoBehaviour
             case "57600 bps":
                 baudRate = 57600;
                 break;
+            case "115200 bps":
+                baudRate = 115200;
+                break;
             default:
                 baudRate = 9600;
                 break;
@@ -275,6 +278,9 @@ public class SerialClockBoard : MonoBehaviour
                 break;
             case "57600 bps":
                 baudRate = 57600;
+                break;
+            case "115200 bps":
+                baudRate = 115200;
                 break;
             default:
                 baudRate = 9600;

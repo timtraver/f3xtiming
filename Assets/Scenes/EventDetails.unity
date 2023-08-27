@@ -19491,6 +19491,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: 57600 bps
       m_Image: {fileID: 0}
+    - m_Text: 115200 bps
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -31060,6 +31062,8 @@ MonoBehaviour:
     - m_Text: 38400 bps
       m_Image: {fileID: 0}
     - m_Text: 57600 bps
+      m_Image: {fileID: 0}
+    - m_Text: 115200 bps
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
