@@ -271,7 +271,7 @@ public class QueueControl : MonoBehaviour
         float sliderPercent = 0;
         if( clockCurrentSeconds > 0)
         {
-            sliderPercent = (float)(clockCurrentSeconds / clockTotalSeconds);
+            sliderPercent = 1f - ((float)(clockCurrentSeconds / clockTotalSeconds));
         }
         countDownSlider.value = sliderPercent;
         return;
@@ -825,11 +825,11 @@ public class QueueControl : MonoBehaviour
     }
     private void SetReminderList()
     {
-        reminderStrings.Add("Come on you wiley coyotes!, enter your scores. This means you.,, ");
-        reminderStrings.Add("Hey! Dudes flying Toy airplanes.,,, Please Enter your scores. This means you.,, ");
-        reminderStrings.Add("Don't make us sick you know who on you to enter your scores. This means you.,, ");
-        reminderStrings.Add("Yo! You cool pilots don't want to get in trouble do you?,, enter your scores. This means you.,, ");
-        reminderStrings.Add("Don't make us come over there, to get you to enter your scores. This means you.,, ");
+        reminderStrings.Add("Come on all you old haggled R C Pilots!, enter your scores. This means you.,, ");
+        reminderStrings.Add("Hey! Dudes flying Toy airplanes!,,, Please Enter your scores. This means you.,, ");
+        reminderStrings.Add("Don't make us sick a rabid dog on you to enter your scores. This means you.,, ");
+        reminderStrings.Add("Yo! Yo! Dogs! You pilots don't want to get in trouble do you?,, enter your scores. This means you.,, ");
+        reminderStrings.Add("Don't make me send the C D over there! Enter your scores.,, This means you.,, ");
         return;
     }
     // Routines to calculate the time remaining in event
