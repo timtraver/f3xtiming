@@ -461,6 +461,7 @@ public class SerialClockBoard : MonoBehaviour
                         string type = "";
                         switch (queueControl.playList[queueControl.currentQueueEntry].entryType)
                         {
+                            case "RoundAnnounce":
                             case "Announce":
                             case "Wait":
                                 type = "ST";

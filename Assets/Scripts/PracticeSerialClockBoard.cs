@@ -183,6 +183,9 @@ public class PracticeSerialClockBoard : MonoBehaviour
             case "57600 bps":
                 baudRate = 57600;
                 break;
+            case "115200 bps":
+                baudRate = 57600;
+                break;
             default:
                 baudRate = 9600;
                 break;
@@ -308,6 +311,7 @@ public class PracticeSerialClockBoard : MonoBehaviour
                         string type = "";
                         switch (queueControl.playList[queueControl.currentQueueEntry].entryType)
                         {
+                            case "RoundAnnounce":
                             case "Announce":
                             case "Wait":
                                 type = "ST";
