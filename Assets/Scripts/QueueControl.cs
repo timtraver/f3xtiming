@@ -316,9 +316,8 @@ public class QueueControl : MonoBehaviour
                         insult++;
                         if (insult >= reminderStrings.Count) { reminderStrings.Shuffle(); insult = 0; }
                         speakText = insultString;
-                        //speakText = "Will the following pilots please enter scores for previous rounds.,, ";
                         speakText += String.Join(", ", nagList);
-                        speakText += ". Thank you. Now for the next round.,, ";
+                        speakText += ". Thank you. Now for the next round. ";
                     }
                 }
             }
@@ -825,11 +824,11 @@ public class QueueControl : MonoBehaviour
     }
     private void SetReminderList()
     {
-        reminderStrings.Add("Come on all you old haggled R C Pilots!, enter your scores. This means you.,, ");
-        reminderStrings.Add("Hey! Dudes flying Toy airplanes!,,, Please Enter your scores. This means you.,, ");
-        reminderStrings.Add("Don't make us sick a rabid dog on you to enter your scores. This means you.,, ");
-        reminderStrings.Add("Yo! Yo! Dogs! You pilots don't want to get in trouble do you?,, enter your scores. This means you.,, ");
-        reminderStrings.Add("Don't make me send the C D over there! Enter your scores.,, This means you.,, ");
+        reminderStrings.Add("Come on all you old haggled R C Pilots!, enter your scores. This means you. ");
+        reminderStrings.Add("Hey! Dudes flying Toy airplanes! Please Enter your scores. This means you. ");
+        reminderStrings.Add("Don't make us sick a rabid dog on you to enter your scores. This means you. ");
+        reminderStrings.Add("Yo! Yo! Dogs! You pilots don't want to get in trouble do you? enter your scores. This means you. ");
+        reminderStrings.Add("Don't make me send the C D over there! Enter your scores. This means you. ");
         return;
     }
     // Routines to calculate the time remaining in event

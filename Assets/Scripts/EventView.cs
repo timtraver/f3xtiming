@@ -1131,7 +1131,7 @@ public class EventView : MonoBehaviour
         tempEntry.textDescription = "End of contest.";
         if (prefs["announceScoreReminders"] == "1")
         {
-            tempEntry.spokenText = "End of contest.,, Please enter your final scores in the self scoring system.,, Thank you for flying with F 3 x vault. Have a nice day.";
+            tempEntry.spokenText = "End of contest. Please enter your final scores in the self scoring system. Thank you for flying with F 3 x vault. Have a nice day.";
         }
         else
         {
