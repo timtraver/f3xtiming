@@ -421,6 +421,12 @@ public class FlightDescriptions
             description: "F3k Task M - Huge ladder. Three flights only. Three minute, five minute, and seven minnit flights in order. All time achieved counts. Fifteen minute working window.",
             windowTime: 900
         ));
+        flights.Add(new FlightDescription(
+            code: "f3k_n",
+            name: "F3K Task N - Best Flight (9:59 Max)",
+            description: "F3k Task N - Best flight. One flight only. Ten minute working window.",
+            windowTime: 600
+        ));
         // F3J Flight
         flights.Add(new FlightDescription(
             code: "f3j_duration",
@@ -512,4 +518,10 @@ public class PreferenceVoice
         this.voiceCulture = voiceCulture;
         this.voiceDescription = voiceDescription;
     }
+}
+
+// Version setting for this release
+public class SoftwareVersion
+{
+    public string versionString = "v1.5";
 }
