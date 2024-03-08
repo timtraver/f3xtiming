@@ -45,7 +45,7 @@ public class DrawDisplay : MonoBehaviour
             // Ok lets find out what the current round is and only show an entered or not entered for previous rounds
             if (queueControlExists == 1)
             {
-                if (round.round_number >= queueControl.e.playList[queueControl.currentQueueEntry].round_number || queueControl.currentQueueEntry == 0)
+                if ((round.round_number >= queueControl.e.playList[queueControl.currentQueueEntry].round_number || queueControl.currentQueueEntry == 0) && queueControl.lastQueueEntry != 0 && queueControl.e.playList[queueControl.currentQueueEntry].round_number != 0)
                 {
                     pilotEntered.enabled = false;
                     pilotNotEntered.enabled = false;

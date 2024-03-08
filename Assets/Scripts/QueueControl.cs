@@ -497,6 +497,7 @@ public class QueueControl : MonoBehaviour
     public void UpdateClockText()
     {
         int currentSeconds = Convert.ToInt32( Math.Ceiling(clockCurrentSeconds) );
+        bool speakNow = true;
 
         clockText.text = e.convertSecondsToClockString( currentSeconds );
         UpdateProgressBar();
@@ -644,9 +645,16 @@ public class QueueControl : MonoBehaviour
                         }
                     }
                 }
-
+                // Determine if the text being spoken needs to be said RIGHT NOW, so it doesn't interfere with some other manually triggered speech (like reminder)
+                if ((playList[currentQueueEntry].entryType == "PrepTime" || playList[currentQueueEntry].entryType == "Window")
+                    && currentSeconds > 60
+                    && Speaker.Instance.isSpeaking == true
+                )
+                {
+                    speakNow = false;
+                }
                 // Now play the actual speech ( if there is any )
-                if (speakText != "" && speakText != " " && speakText != null)
+                if (speakText != "" && speakText != " " && speakText != null && speakNow == true)
                 {
                     Speaker.Instance.Speak(speakText, e.audioSource, voice, true);
                 }

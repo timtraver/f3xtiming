@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
     public Button searchButton;
     public Button connectedButton;
     public Text connectedButtonText;
+    public Text softwareVersion;
 
     private void Awake()
     {
@@ -36,6 +37,8 @@ public class MainMenu : MonoBehaviour
         {
             resumeButton.gameObject.SetActive(false);
         }
+        softwareVersion.text = new SoftwareVersion().versionString;
+        Debug.Log("version = " + softwareVersion.text);
     }
 
     public void OnConnectivityChange( bool isConnected, string errorMsg)
