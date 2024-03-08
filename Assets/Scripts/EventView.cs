@@ -11,6 +11,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 public class EventView : MonoBehaviour
 {
+    public Text softwareVersion;
     public int eventID;
     public Dictionary<String, String> prefs = new Dictionary<string, string>();
     public List<int> eventNumRounds = new List<int>();
@@ -94,6 +95,8 @@ public class EventView : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        softwareVersion.text = new SoftwareVersion().versionString;
+
         // Add listener for when the value of the Language Dropdown changes, to take action
         prefsCulture.onValueChanged.AddListener(delegate { LanguageDropDownItemSelected(prefsCulture); });
 
@@ -260,9 +263,15 @@ public class EventView : MonoBehaviour
         string speakText = "";
         int maxRound = playList[queueControl.currentQueueEntry].round_number - 1;
         if (maxRound < 0) { maxRound = 0; }
+        if (queueControl.lastQueueEntry > 0 && maxRound == 0)
+        {
+            // Means we have reached the end of the contest, so lets make the call on everyone on all rounds
+            maxRound = rounds.Count;
+        }
         // If it is the end of a round, and the reminder to self score is activated, let us do it here
         if (queueControl.lastQueueEntry != -1 && internetConnected != 0)
         {
+            LoadEvent();
             // let us look at rounds in the draw more than one round old where pilots have not entered scores
             List<string> nagList = getPilotReminderList(maxRound);
             if (nagList.Count > 0)
